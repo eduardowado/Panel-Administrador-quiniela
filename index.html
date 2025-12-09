@@ -268,7 +268,7 @@
         #admin-mensaje.success { background-color: #d4edda; color: #155724; }
         #admin-mensaje.error { background-color: #f8d7da; color: #721c24; }
         
-        /* --- ¡NUEVO! (v3.0) Estilos del Visor y Modal --- */
+        /* --- Visor y Modal --- */
         #visor-jugadores-container {
             margin-top: 20px;
             display: none;
@@ -319,7 +319,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
-            display: none; /* Cambia a flex */
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -472,7 +472,7 @@
             
             <div id="tab-codigos-semanales" class="tab-content">
                 <div class="form-section">
-                    <h2>Asignar Código Semanal ($30)</h2>
+                    <h2>Asignar Código Semanal </h2>
                     <p style="font-size:0.9em; color:#555; margin-top:-10px;">Busca el próximo código numérico disponible y le asigna el saldo pagado.</p>
                     <form id="form-asignar-codigo-semanal">
                         <div class="form-group">
@@ -676,10 +676,14 @@
             </div>
 
 
-        </div> <div id="admin-loader">Procesando...</div>
+        </div> 
+        
+        <div id="admin-loader">Procesando...</div>
         <div id="admin-mensaje"></div>
         
-    </div> <div class="modal-overlay" id="modal-overlay">
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay">
         <div class="modal-box">
             <h3 id="modal-nombre"></h3>
             <div class="modal-info">
@@ -706,16 +710,14 @@
 
     <script>
         // =========================================================================
-        // SCRIPT DEL PANEL DE CONTROL (v3.0)
+        // SCRIPT DEL PANEL DE CONTROL (CON ALERTA DE DUPLICADOS)
         // =========================================================================
         
-        // --- 1. CONFIGURACIÓN Y VARIABLES ---
-        
-        // ¡¡¡ URL ACTUALIZADA CON LA QUE PROPORCIONASTE !!!
+        // ¡¡¡ ATENCIÓN: PEGA TU URL DE APPS SCRIPT AQUÍ ABAJO !!!
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec";
         
         let adminPassword = "";
-        let listaJugadoresCache = []; // ¡NUEVO! Caché para el visor
+        let listaJugadoresCache = []; 
 
         // --- 2. MANEJO DE PESTAÑAS ---
         const tabs = document.querySelectorAll('.tab-button');
@@ -753,7 +755,6 @@
                     if (data.status === 'error' && data.message.includes('Contraseña')) {
                         mostrarMensajeAdmin('error', 'Contraseña incorrecta.');
                     } else {
-                        // Contraseña válida (o la acción 'ping' no es de admin, lo cual es correcto)
                         loginScreen.style.display = 'none';
                         mainContent.style.display = 'block';
                     }
@@ -769,48 +770,69 @@
         async function llamarAppsScript(formData) {
             mostrarLoader(true);
             mostrarMensajeAdmin(false);
-            formData.append('adminPassword', adminPassword); // Adjuntar contraseña
+            formData.append('adminPassword', adminPassword); 
             
             try {
                 const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const data = await response.json();
                 
                 if (data.status === 'ok') {
-                    if(data.message) { // No todas las respuestas OK tienen mensaje
+                    if(data.message) { 
                         mostrarMensajeAdmin('success', data.message);
                     }
-                    return data; // Devolver datos exitosos
+                    return data; 
                 } else {
+                    // Si el servidor devuelve error, lanzamos excepción con el mensaje
                     throw new Error(data.message);
                 }
             } catch (error) {
                 mostrarMensajeAdmin('error', `Error: ${error.message}`);
-                throw error; // Propagar el error
+                throw error; // Propagar el error para que lo capturen los formularios
             } finally {
                 mostrarLoader(false);
             }
         }
 
-        // --- 5. PESTAÑA "JUGADORES" ---
+        // --- 5. PESTAÑA "JUGADORES" (MODIFICADO CON ALERTA) ---
         document.getElementById('form-registrar-jugador').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // 1. Validación preventiva local (si la lista está cargada)
+            const nombreInput = document.getElementById('reg-nombre').value.trim();
+            if (listaJugadoresCache.length > 0) {
+                const existeLocalmente = listaJugadoresCache.some(j => j.nombre.toLowerCase() === nombreInput.toLowerCase());
+                if (existeLocalmente) {
+                    alert('⚠️ ALERTA: El jugador "' + nombreInput + '" ya existe en la lista cargada.');
+                    return; // Detiene el proceso
+                }
+            }
+
             const form = e.target;
             const formData = new FormData();
             formData.append('accion', 'registrarJugador');
-            formData.append('nombre', document.getElementById('reg-nombre').value);
+            formData.append('nombre', nombreInput);
             formData.append('codigo', document.getElementById('reg-codigo-temporada').value);
             formData.append('telefono', document.getElementById('reg-telefono').value);
             formData.append('pagoInicial', document.getElementById('reg-pago').value);
             
             try {
                 await llamarAppsScript(formData);
+                // Si llega aquí, todo salió bien
                 form.reset();
+                alert('✅ Jugador registrado exitosamente.'); 
+
                 // Recargar la lista si ya estaba cargada
                 if (listaJugadoresCache.length > 0) {
-                    // Simular clic para recargar
                     btnCargarJugadores.click();
                 }
-            } catch (err) { /* el error ya se mostró */ }
+
+            } catch (err) { 
+                // AQUÍ CAPTURAMOS EL ERROR DEL SERVIDOR (NOMBRE DUPLICADO)
+                if (err.message && (err.message.toLowerCase().includes('ya existe') || err.message.toLowerCase().includes('ya está registrado'))) {
+                    alert('⛔ ALERTA: ' + err.message);
+                } 
+                // Si es otro error, ya se muestra en el mensaje rojo del panel
+            }
         });
 
         document.getElementById('form-registrar-pago').addEventListener('submit', async (e) => {
@@ -824,14 +846,13 @@
             try {
                 await llamarAppsScript(formData);
                 form.reset();
-                // Recargar la lista si ya estaba cargada
                 if (listaJugadoresCache.length > 0) {
-                     btnCargarJugadores.click();
+                      btnCargarJugadores.click();
                 }
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
         
-        // --- 5B. ¡NUEVO! Visor de Jugadores ---
+        // --- 5B. Visor de Jugadores ---
         const visorContainer = document.getElementById('visor-jugadores-container');
         const btnCargarJugadores = document.getElementById('btn-cargar-jugadores');
         const filtroInput = document.getElementById('filtro-jugadores');
@@ -844,11 +865,11 @@
             formData.append('accion', 'getJugadores');
             try {
                 const data = await llamarAppsScript(formData);
-                listaJugadoresCache = data.jugadores; // Guardar en caché
+                listaJugadoresCache = data.jugadores; 
                 dibujarListaJugadores(listaJugadoresCache);
                 visorContainer.style.display = 'block';
                 btnCargarJugadores.textContent = 'Actualizar Lista';
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
 
         filtroInput.addEventListener('keyup', () => {
@@ -861,15 +882,14 @@
         });
 
         function dibujarListaJugadores(jugadores) {
-            listaJugadoresContainer.innerHTML = ''; // Limpiar
+            listaJugadoresContainer.innerHTML = ''; 
             if (jugadores.length === 0) {
                 listaJugadoresContainer.innerHTML = '<p style="text-align:center; color:#777; padding: 10px;">No se encontraron jugadores.</p>';
                 return;
             }
-            jugadores.forEach((jugador, index) => {
+            jugadores.forEach((jugador) => {
                 const item = document.createElement('div');
                 item.className = 'jugador-item';
-                // Usamos el 'codigo' como ID único en lugar del índice
                 item.dataset.codigo = jugador.codigo; 
                 item.innerHTML = `
                     <span class="jugador-item-nombre">${jugador.nombre}</span>
@@ -891,7 +911,6 @@
         });
 
         function mostrarModalDetalles(jugador) {
-            // Formatear moneda
             const formatoMoneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
             
             document.getElementById('modal-nombre').textContent = jugador.nombre;
@@ -900,7 +919,6 @@
             document.getElementById('modal-pagado').textContent = formatoMoneda.format(jugador.pagado);
             document.getElementById('modal-debe').textContent = formatoMoneda.format(jugador.debe);
             
-            // Aplicar clases de color
             document.getElementById('modal-debe').className = jugador.debe > 0 ? 'debe' : '';
             document.getElementById('modal-pagado').className = jugador.pagado > 0 ? 'pagado' : '';
             
@@ -937,21 +955,18 @@
             }
         });
         
-        // --- ¡EVENTO MODIFICADO! (v2.9) ---
         document.getElementById('btn-generar-codigos-semanales').addEventListener('click', async (e) => {
-            // ¡NUEVO! (v2.9) Confirmación movida al HTML
             if (!confirm('¿Estás seguro?\n\nEsta acción borrará TODOS los códigos semanales, saldos y estados existentes (Columnas H, I, J) y los reemplazará con 1000 códigos nuevos.')) {
-                return; // El usuario canceló
+                return; 
             }
             
             const formData = new FormData();
             formData.append('accion', 'generarCodigosSemanales');
             try {
                 await llamarAppsScript(formData);
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
 
-        // --- ¡NUEVO! (v2.8) Listener para el botón de copiar ---
         resultadoAsignacionDiv.addEventListener('click', (e) => {
             if (e.target.id === 'btn-copiar-codigo-semanal') {
                 const codigo = document.getElementById('codigo-asignado-texto').textContent;
@@ -971,7 +986,6 @@
                     }, 2000);
                 });
             } else {
-                // Fallback
                 const ta = document.createElement('textarea');
                 ta.value = texto;
                 document.body.appendChild(ta);
@@ -996,10 +1010,9 @@
             const formData = new FormData();
             formData.append('accion', 'actualizarFechaLimite');
             formData.append('fechaLimite', document.getElementById('fecha-limite-input').value);
-            
             try {
                 await llamarAppsScript(formData);
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
         
         document.getElementById('form-jornada-activa').addEventListener('submit', async (e) => {
@@ -1007,10 +1020,9 @@
             const formData = new FormData();
             formData.append('accion', 'actualizarJornadaActiva');
             formData.append('jornadaActiva', document.getElementById('jornada-activa-select').value);
-            
             try {
                 await llamarAppsScript(formData);
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
 
         // --- 8. PESTAÑA "RESULTADOS" ---
@@ -1084,7 +1096,7 @@
             formData.append('accion', 'iniciarTablaGeneral');
             try {
                 await llamarAppsScript(formData);
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
         
         document.getElementById('form-calificar-jornada').addEventListener('submit', async (e) => {
@@ -1098,7 +1110,7 @@
             formData.append('jornada', jornada);
             try {
                 await llamarAppsScript(formData);
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
         
         // --- 10. PESTAÑA "QUINIELA SEMANAL ($30)" ---
@@ -1119,7 +1131,7 @@
             try {
                 const data = await llamarAppsScript(formData);
                 const listaContainer = document.getElementById('participantes-semanal-lista');
-                listaContainer.innerHTML = ''; // Limpiar
+                listaContainer.innerHTML = ''; 
                 
                 data.participantes.forEach(p => {
                     const item = document.createElement('div');
@@ -1137,7 +1149,7 @@
                 document.getElementById('seccion-lista-participantes').style.display = 'block';
                 document.getElementById('seccion-boton-calcular').style.display = 'block';
                 
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
         
         formCalcularSemanal.addEventListener('submit', async (e) => {
@@ -1151,7 +1163,7 @@
             try {
                 const data = await llamarAppsScript(formData);
                 const tbody = document.getElementById('resultados-semanal-tbody');
-                tbody.innerHTML = ''; // Limpiar
+                tbody.innerHTML = ''; 
                 
                 data.resultados.forEach((r, index) => {
                     const fila = document.createElement('tr');
@@ -1167,7 +1179,7 @@
                 
                 document.getElementById('seccion-resultados-semanal').style.display = 'block';
                 
-            } catch (err) { /* el error ya se mostró */ }
+            } catch (err) { }
         });
         
 
@@ -1188,7 +1200,6 @@
             mensaje.textContent = texto;
             mensaje.style.display = 'block';
             
-            // Ocultar mensaje después de 5 segundos
             setTimeout(() => {
                 if (mensaje.textContent === texto) {
                     mensaje.style.display = 'none';
