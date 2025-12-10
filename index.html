@@ -3,391 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administrador</title>
+    <title>Panel de Administrador - Quiniela</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* --- Estilos del Panel --- */
-        .admin-panel {
-            max-width: 900px;
-            margin: 20px auto;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
-            overflow: hidden;
-        }
-
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px 25px;
-            text-align: center;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-
-        /* --- Pestañas de Navegación --- */
-        .tab-nav {
-            display: flex;
-            background-color: #34495e;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        .tab-button {
-            padding: 14px 20px;
-            cursor: pointer;
-            background-color: transparent;
-            border: none;
-            color: #ecf0f1;
-            font-size: 0.9em;
-            font-weight: 500;
-            transition: background-color 0.2s, color 0.2s, border-bottom 0.2s;
-            border-bottom: 3px solid transparent;
-        }
-        .tab-button:hover {
-            background-color: #3b536b;
-        }
-        .tab-button.active {
-            color: white;
-            border-bottom: 3px solid #3498db;
-        }
-
-        /* --- Contenido de Pestañas --- */
-        .tab-content {
-            display: none;
-            padding: 25px;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .tab-content h2 {
-            font-size: 1.3em;
-            color: #34495e;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f0f2f5; color: #333; -webkit-font-smoothing: antialiased; }
         
-        /* --- Formulario de Login --- */
-        #login-screen {
-            padding: 30px;
-            text-align: center;
-        }
-        #main-content {
-            display: none;
-        }
+        /* --- Estilos Generales --- */
+        .admin-panel { max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
+        header { background-color: #2c3e50; color: white; padding: 20px 25px; text-align: center; }
+        header h1 { margin: 0; font-size: 1.5em; }
 
-        /* --- Estilos de Formularios (Inputs, Botones) --- */
-        .form-section {
-            background-color: #f9f9f9;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
+        /* --- Pestañas --- */
+        .tab-nav { display: flex; background-color: #34495e; overflow-x: auto; white-space: nowrap; }
+        .tab-button { padding: 14px 20px; cursor: pointer; background-color: transparent; border: none; color: #ecf0f1; font-size: 0.9em; font-weight: 500; transition: 0.2s; border-bottom: 3px solid transparent; }
+        .tab-button:hover { background-color: #3b536b; }
+        .tab-button.active { color: white; border-bottom: 3px solid #3498db; }
+        .tab-content { display: none; padding: 25px; }
+        .tab-content.active { display: block; }
+        .tab-content h2 { font-size: 1.3em; color: #34495e; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 6px;
-            font-size: 0.9em;
-        }
-        input[type="text"],
-        input[type="password"],
-        input[type="number"],
-        input[type="tel"],
-        input[type="datetime-local"],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
+        /* --- Login --- */
+        #login-screen { padding: 30px; text-align: center; }
+        #main-content { display: none; }
 
-        button {
-            padding: 12px 20px;
-            font-size: 1em;
-            font-weight: 700;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        button:active {
-            transform: scale(0.98);
-        }
-        button.btn-primary {
-            background-color: #3498db;
-            color: white;
-        }
-        button.btn-primary:hover {
-            background-color: #2980b9;
-        }
-        button.btn-secondary {
-            background-color: #2ecc71;
-            color: white;
-        }
-        button.btn-secondary:hover {
-            background-color: #27ae60;
-        }
-        button.btn-danger {
-            background-color: #e74c3c;
-            color: white;
-        }
-        button.btn-danger:hover {
-            background-color: #c0392b;
-        }
-        button.btn-warning {
-            background-color: #f39c12;
-            color: white;
-        }
-        button.btn-warning:hover {
-            background-color: #e67e22;
-        }
-        button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
+        /* --- Formularios --- */
+        .form-section { background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 0.9em; }
+        input[type="text"], input[type="password"], input[type="number"], input[type="tel"], input[type="datetime-local"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; font-family: inherit; }
         
-        /* --- Estilos de Resultados --- */
-        #partidos-resultados-container {
-            display: grid;
-            gap: 15px;
-        }
-        .partido-resultado-item {
-            display: grid;
-            grid-template-columns: 1fr auto auto auto;
-            align-items: center;
-            gap: 10px;
-            background: #fdfdfd;
-            padding: 10px 15px;
-            border: 1px solid #eee;
-            border-radius: 6px;
-        }
-        .partido-resultado-item label {
-            font-weight: 500;
-            font-size: 0.9em;
-            margin: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .partido-resultado-item input {
-            width: 60px;
-            padding: 8px;
-            text-align: center;
-        }
-        
-        /* --- Estilos Quiniela Semanal --- */
-        #participantes-semanal-lista {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 6px;
-            padding: 10px;
-        }
-        .participante-check {
-            display: block;
-            padding: 10px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .participante-check:last-child {
-            border-bottom: none;
-        }
-        .participante-check label {
-            font-weight: 400;
-            margin: 0;
-            display: flex;
-            align-items: center;
-        }
-        .participante-check input {
-            margin-right: 10px;
-        }
-        .participante-check .tipo {
-            font-size: 0.8em;
-            color: #777;
-            margin-left: auto;
-            padding: 3px 6px;
-            background: #eee;
-            border-radius: 4px;
-        }
-        
-        #resultados-semanal-tabla {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        #resultados-semanal-tabla th, 
-        #resultados-semanal-tabla td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        #resultados-semanal-tabla th {
-            background-color: #f4f4f4;
-        }
-        #resultados-semanal-tabla tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        #resultados-semanal-tabla tr:first-child th {
-            width: 50px;
-        }
+        button { padding: 12px 20px; font-size: 1em; font-weight: 700; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        button.btn-primary { background-color: #3498db; color: white; }
+        button.btn-primary:hover { background-color: #2980b9; }
+        button.btn-secondary { background-color: #2ecc71; color: white; }
+        button.btn-secondary:hover { background-color: #27ae60; }
+        button.btn-danger { background-color: #e74c3c; color: white; }
+        button.btn-warning { background-color: #f39c12; color: white; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
 
-        /* --- Loader y Mensajes --- */
-        #admin-loader {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: 500;
-            color: #3498db;
-        }
-        #admin-mensaje {
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 6px;
-            display: none;
-            font-weight: 500;
-        }
+        /* --- Listas y Tablas --- */
+        #participantes-semanal-lista, #lista-jugadores { max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; padding: 10px; }
+        .participante-check, .jugador-item { padding: 10px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+        .jugador-item { cursor: pointer; }
+        .jugador-item:hover { background-color: #f9f9f9; }
+        
+        .partido-resultado-item { display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; padding: 10px; border: 1px solid #eee; margin-bottom: 10px; background: #fff; border-radius: 6px; align-items: center; }
+        .partido-resultado-item input { width: 60px; text-align: center; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+
+        /* --- Loader y Modal --- */
+        #admin-loader, #admin-mensaje { display: none; text-align: center; margin: 20px 0; font-weight: 500; }
+        #admin-mensaje { padding: 15px; border-radius: 6px; }
         #admin-mensaje.success { background-color: #d4edda; color: #155724; }
         #admin-mensaje.error { background-color: #f8d7da; color: #721c24; }
-        
-        /* --- Visor y Modal --- */
-        #visor-jugadores-container {
-            margin-top: 20px;
-            display: none;
-        }
-        #filtro-jugadores {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-        #lista-jugadores {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 6px;
-        }
-        .jugador-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .jugador-item:hover {
-            background-color: #f9f9f9;
-        }
-        .jugador-item:last-child {
-            border-bottom: none;
-        }
-        .jugador-item-nombre {
-            font-weight: 500;
-        }
-        .jugador-item-codigo {
-            font-size: 0.9em;
-            color: #555;
-            background-color: #eee;
-            padding: 3px 6px;
-            border-radius: 4px;
-        }
-        
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-box {
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 450px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        .modal-box h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .modal-info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .modal-info-item:last-child {
-            border-bottom: none;
-        }
-        .modal-info-item strong {
-            color: #555;
-        }
-        .modal-info-item span {
-            font-weight: 500;
-            color: #000;
-        }
-        .modal-info-item span.debe {
-            color: #e74c3c;
-            font-weight: 700;
-        }
-        .modal-info-item span.pagado {
-            color: #2ecc71;
-            font-weight: 700;
-        }
-        
-        /* --- Responsivo --- */
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; }
+        .modal-info-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .debe { color: #e74c3c; font-weight: bold; } .pagado { color: #2ecc71; font-weight: bold; }
+
         @media (max-width: 600px) {
-            .admin-panel {
-                margin: 0;
-                border-radius: 0;
-                min-height: 100vh;
-            }
-            .tab-button {
-                padding: 12px 15px;
-                font-size: 0.8em;
-            }
-            .tab-content {
-                padding: 15px;
-            }
-            .partido-resultado-item {
-                grid-template-columns: 1fr auto auto;
-                gap: 8px;
-            }
-            .partido-resultado-item label {
-                grid-column: 1 / -1;
-            }
-            .partido-resultado-item input {
-                width: 50px;
-            }
-            .partido-resultado-item button {
-                justify-self: end;
-            }
+            .admin-panel { margin: 0; border-radius: 0; min-height: 100vh; }
+            .partido-resultado-item { grid-template-columns: 1fr auto auto; }
+            .partido-resultado-item label { grid-column: 1 / -1; }
+            .partido-resultado-item button { justify-self: end; }
         }
     </style>
 </head>
@@ -412,11 +97,11 @@
         <div id="main-content">
             <nav class="tab-nav">
                 <button class="tab-button active" data-tab="tab-jugadores">Jugadores</button>
-                <button class="tab-button" data-tab="tab-codigos-semanales">Códigos Semanales</button>
+                <button class="tab-button" data-tab="tab-codigos-semanales">Códigos & Plantillas</button>
                 <button class="tab-button" data-tab="tab-config">Configuración</button>
                 <button class="tab-button" data-tab="tab-resultados">Resultados</button>
-                <button class="tab-button" data-tab="tab-calificar">Calificar (Temporada)</button>
-                <button class="tab-button" data-tab="tab-calificar-semanal">Quiniela Semanal</button>
+                <button class="tab-button" data-tab="tab-calificar">Calificar Temp.</button>
+                <button class="tab-button" data-tab="tab-calificar-semanal">Calif. Semanal</button>
             </nav>
 
             <div id="tab-jugadores" class="tab-content active">
@@ -424,327 +109,233 @@
                     <h2>Registrar Nuevo Jugador (Temporada)</h2>
                     <form id="form-registrar-jugador">
                         <div class="form-group">
-                            <label for="reg-nombre">Nombre Completo:</label>
-                            <input type="text" id="reg-nombre" required>
+                            <label>Nombre Completo:</label> <input type="text" id="reg-nombre" required>
                         </div>
                         <div class="form-group">
-                            <label for="reg-codigo-temporada">Código de Acceso (Temporada):</label>
-                            <input type="text" id="reg-codigo-temporada" placeholder="Ej. GUAYO, EDY12 (único)" required>
+                            <label>Código de Acceso:</label> <input type="text" id="reg-codigo-temporada" placeholder="Ej. GUAYO" required>
                         </div>
                         <div class="form-group">
-                            <label for="reg-telefono">Teléfono:</label>
-                            <input type="tel" id="reg-telefono">
+                            <label>Teléfono:</label> <input type="tel" id="reg-telefono">
                         </div>
                         <div class="form-group">
-                            <label for="reg-pago">Pago Inicial ($):</label>
-                            <input type="number" id="reg-pago" value="0" min="0">
+                            <label>Pago Inicial ($):</label> <input type="number" id="reg-pago" value="0">
                         </div>
                         <button type="submit" class="btn-primary" style="width:100%;">Registrar Jugador</button>
                     </form>
                 </div>
-
                 <div class="form-section">
-                    <h2>Registrar Pago Adicional (Abono)</h2>
+                    <h2>Registrar Pago Adicional</h2>
                     <form id="form-registrar-pago">
                         <div class="form-group">
-                            <label for="pago-codigo-temporada">Código de Acceso (Temporada):</label>
-                            <input type="text" id="pago-codigo-temporada" placeholder="Ej. GUAYO (el de temporada)" required>
+                            <label>Código de Acceso:</label> <input type="text" id="pago-codigo-temporada" required>
                         </div>
                         <div class="form-group">
-                            <label for="pago-monto">Monto ($):</label>
-                            <input type="number" id="pago-monto" min="1" required>
+                            <label>Monto ($):</label> <input type="number" id="pago-monto" required>
                         </div>
                         <button type="submit" class="btn-secondary" style="width:100%;">Registrar Abono</button>
                     </form>
                 </div>
-                
                 <div class="form-section">
-                    <h2>Visor de Jugadores (Temporada)</h2>
-                    <button id="btn-cargar-jugadores" class="btn-primary" style="width:100%;">Cargar Lista de Jugadores</button>
-                    <div id="visor-jugadores-container">
-                        <input type="text" id="filtro-jugadores" placeholder="Buscar por nombre o código...">
-                        <div id="lista-jugadores">
-                            </div>
+                    <h2>Visor de Jugadores</h2>
+                    <button id="btn-cargar-jugadores" class="btn-primary" style="width:100%; margin-bottom:10px;">Cargar Lista</button>
+                    <div id="visor-jugadores-container" style="display:none;">
+                        <input type="text" id="filtro-jugadores" placeholder="Buscar...">
+                        <div id="lista-jugadores"></div>
                     </div>
                 </div>
-                
             </div>
             
             <div id="tab-codigos-semanales" class="tab-content">
-                <div class="form-section">
-                    <h2>Asignar Código Semanal </h2>
-                    <p style="font-size:0.9em; color:#555; margin-top:-10px;">Busca el próximo código numérico disponible y le asigna el saldo pagado.</p>
-                    <form id="form-asignar-codigo-semanal">
-                        <div class="form-group">
-                            <label for="asig-num-quinielas">Número de Quinielas Pagadas:</label>
-                            <input type="number" id="asig-num-quinielas" value="1" min="1">
-                        </div>
-                        <button type="submit" class="btn-primary">Asignar y Mostrar Código</button>
-                    </form>
-                    
-                    <div id="resultado-asignacion" style="display:none; margin-top:20px; text-align:center;">
-                        <p style="margin:0;">Código Asignado:</p>
-                        <h3 id="codigo-asignado-texto" style="font-size:2em; margin:10px 0; color:#e74c3c;"></h3>
-                        <p id="saldo-asignado-texto" style="margin:0; font-size:0.9em;"></p>
-                        <button type="button" id="btn-copiar-codigo-semanal" class="btn-secondary" style="margin-top: 15px; width: 100%;">Copiar Código</button>
+                
+                <div class="form-section" style="border-top: 4px solid #3498db;">
+                    <h2 style="color: #2c3e50;">📢 Plantillas de Invitación</h2>
+                    <p style="color:#666; font-size:0.9em;">
+                        Estos mensajes se leen desde la hoja <b>CONFIG_TEMPORADA</b> (Celda B20 y B21).
+                    </p>
+                    <button id="btn-cargar-plantillas" class="btn-warning" style="width:100%; margin-bottom:20px;">🔄 Cargar Textos desde Excel</button>
+
+                    <div style="background: #eaf2f8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="margin:0 0 10px 0; color: #2980b9;">🏆 Temporada ($500)</h3>
+                        <textarea id="msg-temporada" style="width:100%; height:120px; resize:none; margin-bottom:10px;" readonly>Presiona "Cargar Textos"...</textarea>
+                        <button type="button" onclick="copiarTexto('msg-temporada', this)" class="btn-primary" style="width:100%;">📋 Copiar Texto</button>
+                    </div>
+
+                    <div style="background: #e9f7ef; padding: 15px; border-radius: 8px;">
+                        <h3 style="margin:0 0 10px 0; color: #27ae60;">⚽ Semanal ($30)</h3>
+                        <textarea id="msg-semanal" style="width:100%; height:120px; resize:none; margin-bottom:10px;" readonly>Presiona "Cargar Textos"...</textarea>
+                        <button type="button" onclick="copiarTexto('msg-semanal', this)" class="btn-secondary" style="width:100%;">📋 Copiar Texto</button>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h2>Generar Códigos Semanales</h2>
-                    <p style="font-size:0.9em; color:#555; margin-top:-10px;">Presiona este botón si te quedas sin códigos. Generará 1000 códigos numéricos nuevos de 4 dígitos.</p>
-                    <button id="btn-generar-codigos-semanales" class="btn-danger">Generar 1000 Códigos Nuevos</button>
+                    <h2>Asignar Código Semanal</h2>
+                    <form id="form-asignar-codigo-semanal">
+                        <div class="form-group">
+                            <label>Número de Quinielas:</label> <input type="number" id="asig-num-quinielas" value="1" min="1">
+                        </div>
+                        <button type="submit" class="btn-primary">Asignar Código</button>
+                    </form>
+                    <div id="resultado-asignacion" style="display:none; margin-top:20px; text-align:center;">
+                        <h3 id="codigo-asignado-texto" style="font-size:2em; margin:10px 0; color:#e74c3c;"></h3>
+                        <p id="saldo-asignado-texto"></p>
+                        <button type="button" id="btn-copiar-codigo-semanal" class="btn-secondary" style="width:100%;">Copiar Código</button>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <h2>Generar Códigos Nuevos</h2>
+                    <button id="btn-generar-codigos-semanales" class="btn-danger">Generar 1000 Códigos</button>
                 </div>
             </div>
 
             <div id="tab-config" class="tab-content">
                 <div class="form-section">
-                    <h2>Establecer Fecha Límite</h2>
+                    <h2>Fecha Límite</h2>
                     <form id="form-fecha-limite">
-                        <div class="form-group">
-                            <label for="fecha-limite-input">Próxima Fecha Límite:</label>
-                            <input type="datetime-local" id="fecha-limite-input" required>
-                        </div>
+                        <div class="form-group"><input type="datetime-local" id="fecha-limite-input" required></div>
                         <button type="submit" class="btn-primary">Guardar Fecha</button>
                     </form>
                 </div>
-                
                 <div class="form-section">
-                    <h2>Establecer Jornada Activa</h2>
+                    <h2>Jornada Activa</h2>
                     <form id="form-jornada-activa">
                         <div class="form-group">
-                            <label for="jornada-activa-select">Jornada Activa Actual:</label>
                             <select id="jornada-activa-select" required>
-                                <option value="1">Jornada 1</option>
-                                <option value="2">Jornada 2</option>
-                                <option value="3">Jornada 3</option>
-                                <option value="4">Jornada 4</option>
-                                <option value="5">Jornada 5</option>
-                                <option value="6">Jornada 6</option>
-                                <option value="7">Jornada 7</option>
-                                <option value="8">Jornada 8</option>
-                                <option value="9">Jornada 9</option>
-                                <option value="10">Jornada 10</option>
-                                <option value="11">Jornada 11</option>
-                                <option value="12">Jornada 12</option>
-                                <option value="13">Jornada 13</option>
-                                <option value="14">Jornada 14</option>
-                                <option value="15">Jornada 15</option>
-                                <option value="16">Jornada 16</option>
-                                <option value="17">Jornada 17</option>
+                                <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                                <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                                <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                                <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                                <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                                <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn-primary">Guardar Jornada Activa</button>
+                        <button type="submit" class="btn-primary">Guardar Jornada</button>
                     </form>
                 </div>
             </div>
 
             <div id="tab-resultados" class="tab-content">
                 <div class="form-section">
-                    <h2>Guardar Resultados Oficiales</h2>
-                    <form id="form-cargar-partidos-resultados">
-                        <div class="form-group">
-                            <label for="jornada-resultados-select">Selecciona la Jornada:</label>
-                            <select id="jornada-resultados-select" required>
-                                <option value="">Selecciona...</option>
-                                <option value="1">Jornada 1</option>
-                                <option value="2">Jornada 2</option>
-                                <option value="3">Jornada 3</option>
-                                <option value="4">Jornada 4</option>
-                                <option value="5">Jornada 5</option>
-                                <option value="6">Jornada 6</option>
-                                <option value="7">Jornada 7</option>
-                                <option value="8">Jornada 8</option>
-                                <option value="9">Jornada 9</option>
-                                <option value="10">Jornada 10</option>
-                                <option value="11">Jornada 11</option>
-                                <option value="12">Jornada 12</option>
-                                <option value="13">Jornada 13</option>
-                                <option value="14">Jornada 14</option>
-                                <option value="15">Jornada 15</option>
-                                <option value="16">Jornada 16</option>
-                                <option value="17">Jornada 17</option>
-                            </select>
-                        </div>
-                    </form>
-                    
-                    <div id="partidos-resultados-container" style="margin-top: 20px;">
-                        </div>
+                    <h2>Resultados Oficiales</h2>
+                    <select id="jornada-resultados-select">
+                        <option value="">Selecciona Jornada...</option>
+                        <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                        <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                        <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                        <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                        <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                        <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
+                    </select>
+                    <div id="partidos-resultados-container" style="margin-top: 20px;"></div>
                 </div>
             </div>
 
             <div id="tab-calificar" class="tab-content">
                  <div class="form-section">
-                    <h2>Iniciar Tabla General (Temporada)</h2>
-                    <p style="font-size:0.9em; color:#555; margin-top:-10px;">Presiona este botón **UNA SOLA VEZ** al inicio del torneo, después de registrar a todos tus jugadores de Temporada y Ambos.</p>
-                    <button id="btn-iniciar-tabla" class="btn-warning" style="width:100%;">Iniciar Tabla (Cargar Jugadores)</button>
+                    <h2>Iniciar Tabla General</h2>
+                    <p style="font-size:0.9em; color:#555;">(Solo UNA VEZ al inicio del torneo)</p>
+                    <button id="btn-iniciar-tabla" class="btn-warning" style="width:100%;">Iniciar Tabla</button>
                 </div>
-
                 <div class="form-section">
-                    <h2>Calificar Jornada (Temporada)</h2>
-                    <p style="font-size:0.9em; color:#555; margin-top:-10px;">Asegúrate de haber guardado todos los resultados de la jornada en la pestaña "Resultados".</p>
+                    <h2>Calificar Jornada</h2>
                     <form id="form-calificar-jornada">
                         <div class="form-group">
-                            <label for="jornada-calificar-select">Jornada a Calificar y Actualizar Puntos:</label>
                             <select id="jornada-calificar-select" required>
-                                <option value="">Selecciona...</option>
-                                <option value="1">Jornada 1</option>
-                                <option value="2">Jornada 2</option>
-                                <option value="3">Jornada 3</option>
-                                <option value="4">Jornada 4</option>
-                                <option value="5">Jornada 5</option>
-                                <option value="6">Jornada 6</option>
-                                <option value="7">Jornada 7</option>
-                                <option value="8">Jornada 8</option>
-                                <option value="9">Jornada 9</option>
-                                <option value="10">Jornada 10</option>
-                                <option value="11">Jornada 11</option>
-                                <option value="12">Jornada 12</option>
-                                <option value="13">Jornada 13</option>
-                                <option value="14">Jornada 14</option>
-                                <option value="15">Jornada 15</option>
-                                <option value="16">Jornada 16</option>
-                                <option value="17">Jornada 17</option>
+                                <option value="">Selecciona Jornada...</option>
+                                <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                                <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                                <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                                <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                                <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                                <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn-secondary" style="width:100%;">Calificar Esta Jornada</button>
+                        <button type="submit" class="btn-secondary" style="width:100%;">Calificar y Actualizar Tabla</button>
                     </form>
                 </div>
             </div>
             
             <div id="tab-calificar-semanal" class="tab-content">
                 <div class="form-section">
-                    <h2>Calcular Ganador Semanal ($30)</h2>
-                    <p style="font-size:0.9em; color:#555; margin-top:-10px;">Esto califica a los jugadores "Semanal" y "Ambos" que hayan pagado la cuota de la jornada.</p>
-                    
+                    <h2>1. Cargar Participantes Semanales</h2>
                     <form id="form-cargar-participantes-semanal">
                         <div class="form-group">
-                            <label for="jornada-semanal-select">Jornada a Calificar:</label>
                             <select id="jornada-semanal-select" required>
-                                <option value="">Selecciona...</option>
-                                <option value="1">Jornada 1</option>
-                                <option value="2">Jornada 2</option>
-                                <option value="3">Jornada 3</option>
-                                <option value="4">Jornada 4</option>
-                                <option value="5">Jornada 5</option>
-                                <option value="6">Jornada 6</option>
-                                <option value="7">Jornada 7</option>
-                                <option value="8">Jornada 8</option>
-                                <option value="9">Jornada 9</option>
-                                <option value="10">Jornada 10</option>
-                                <option value="11">Jornada 11</option>
-                                <option value="12">Jornada 12</option>
-                                <option value="13">Jornada 13</option>
-                                <option value="14">Jornada 14</option>
-                                <option value="15">Jornada 15</option>
-                                <option value="16">Jornada 16</option>
-                                <option value="17">Jornada 17</option>
+                                <option value="">Selecciona Jornada...</option>
+                                <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                                <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                                <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                                <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                                <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                                <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn-primary">1. Cargar Participantes de esta Jornada</button>
+                        <button type="submit" class="btn-primary">Cargar Participantes</button>
                     </form>
                 </div>
                 
                 <form id="form-calcular-semanal">
                     <div class="form-section" id="seccion-lista-participantes" style="display:none;">
-                        <h2>2. Selecciona los que pagaron $30</h2>
-                        <div id="participantes-semanal-lista">
-                            </div>
+                        <h2>2. Confirmar Pagos ($30)</h2>
+                        <div id="participantes-semanal-lista"></div>
                     </div>
-                    
                     <div id="seccion-boton-calcular" style="display:none;">
-                        <button type="submit" class="btn-secondary" style="width:100%;">2. Calcular Ganador Semanal</button>
+                        <button type="submit" class="btn-secondary" style="width:100%;">Calcular Ganador</button>
                     </div>
                 </form>
                 
                 <div class="form-section" id="seccion-resultados-semanal" style="display:none;">
-                    <h2>Resultados de la Quiniela Semanal</h2>
+                    <h2>Resultados Semanales</h2>
                     <table id="resultados-semanal-tabla">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nombre</th>
-                                <th>Puntos</th>
-                                <th>Marcadores</th>
-                                <th>Resultados</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultados-semanal-tbody">
-                            </tbody>
+                        <thead><tr><th>#</th><th>Nombre</th><th>Pts</th><th>M</th><th>R</th></tr></thead>
+                        <tbody id="resultados-semanal-tbody"></tbody>
                     </table>
                 </div>
             </div>
-
 
         </div> 
         
         <div id="admin-loader">Procesando...</div>
         <div id="admin-mensaje"></div>
-        
     </div>
 
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal-box">
             <h3 id="modal-nombre"></h3>
-            <div class="modal-info">
-                <div class="modal-info-item">
-                    <strong>Código Temporada:</strong>
-                    <span id="modal-codigo"></span>
-                </div>
-                <div class="modal-info-item">
-                    <strong>Teléfono:</strong>
-                    <span id="modal-telefono"></span>
-                </div>
-                <div class="modal-info-item">
-                    <strong>Total Pagado:</strong>
-                    <span id="modal-pagado" class="pagado"></span>
-                </div>
-                <div class="modal-info-item">
-                    <strong>Saldo Pendiente:</strong>
-                    <span id="modal-debe" class="debe"></span>
-                </div>
-            </div>
+            <div class="modal-info-item"><strong>Código:</strong> <span id="modal-codigo"></span></div>
+            <div class="modal-info-item"><strong>Tel:</strong> <span id="modal-telefono"></span></div>
+            <div class="modal-info-item"><strong>Pagado:</strong> <span id="modal-pagado" class="pagado"></span></div>
+            <div class="modal-info-item"><strong>Debe:</strong> <span id="modal-debe" class="debe"></span></div>
             <button id="btn-cerrar-modal" class="btn-primary" style="width:100%; margin-top: 20px;">Cerrar</button>
         </div>
     </div>
 
     <script>
-        // =========================================================================
-        // SCRIPT DEL PANEL DE CONTROL (CON ALERTA DE DUPLICADOS)
-        // =========================================================================
-        
-        // ¡¡¡ ATENCIÓN: PEGA TU URL DE APPS SCRIPT AQUÍ ABAJO !!!
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec";
+        // --- CONFIGURACIÓN ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"; // ¡PEGA TU URL AQUÍ!
         
         let adminPassword = "";
         let listaJugadoresCache = []; 
 
-        // --- 2. MANEJO DE PESTAÑAS ---
+        // --- Pestañas ---
         const tabs = document.querySelectorAll('.tab-button');
-        const contents = document.querySelectorAll('.tab-content');
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                contents.forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 tab.classList.add('active');
                 document.getElementById(tab.dataset.tab).classList.add('active');
             });
         });
 
-        // --- 3. LOGIN ---
-        const loginScreen = document.getElementById('login-screen');
-        const mainContent = document.getElementById('main-content');
-        const passwordInput = document.getElementById('admin-password');
+        // --- LOGIN SEGURO ---
         const loginBtn = document.getElementById('btn-login');
-        
         loginBtn.addEventListener('click', () => {
-            adminPassword = passwordInput.value;
-            if (!adminPassword) {
-                mostrarMensajeAdmin('error', 'Por favor, ingresa una contraseña.');
-                return;
-            }
+            const passInput = document.getElementById('admin-password');
+            adminPassword = passInput.value.trim();
+            if (!adminPassword) { mostrarMensajeAdmin('error', 'Ingresa la contraseña.'); return; }
+
             const formData = new FormData();
-            formData.append('accion', 'ping'); // Acción de prueba
+            formData.append('accion', 'ping'); 
             formData.append('adminPassword', adminPassword);
             
             mostrarLoader(true);
@@ -752,460 +343,816 @@
                 .then(res => res.json())
                 .then(data => {
                     mostrarLoader(false);
-                    if (data.status === 'error' && data.message.includes('Contraseña')) {
-                        mostrarMensajeAdmin('error', 'Contraseña incorrecta.');
+                    if (data.status === 'ok') {
+                        document.getElementById('login-screen').style.display = 'none';
+                        document.getElementById('main-content').style.display = 'block';
+                        mostrarMensajeAdmin('success', 'Bienvenido Administrador');
                     } else {
-                        loginScreen.style.display = 'none';
-                        mainContent.style.display = 'block';
+                        mostrarMensajeAdmin('error', data.message || 'Contraseña Incorrecta');
                     }
-                })
-                .catch(err => {
-                    mostrarLoader(false);
-                    mostrarMensajeAdmin('error', `Error de conexión: ${err.message}`);
-                });
+                }).catch(err => { mostrarLoader(false); mostrarMensajeAdmin('error', 'Error de conexión.'); });
         });
 
-
-        // --- 4. FUNCIÓN GENÉRICA DE LLAMADA AL SCRIPT ---
+        // --- FUNCIONES COMUNES ---
         async function llamarAppsScript(formData) {
             mostrarLoader(true);
             mostrarMensajeAdmin(false);
-            formData.append('adminPassword', adminPassword); 
-            
+            formData.append('adminPassword', adminPassword);
             try {
                 const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const data = await response.json();
-                
                 if (data.status === 'ok') {
-                    if(data.message) { 
-                        mostrarMensajeAdmin('success', data.message);
-                    }
-                    return data; 
-                } else {
-                    // Si el servidor devuelve error, lanzamos excepción con el mensaje
-                    throw new Error(data.message);
-                }
+                    if(data.message) mostrarMensajeAdmin('success', data.message);
+                    return data;
+                } else { throw new Error(data.message); }
             } catch (error) {
-                mostrarMensajeAdmin('error', `Error: ${error.message}`);
-                throw error; // Propagar el error para que lo capturen los formularios
-            } finally {
-                mostrarLoader(false);
-            }
+                mostrarMensajeAdmin('error', error.message); throw error;
+            } finally { mostrarLoader(false); }
         }
 
-        // --- 5. PESTAÑA "JUGADORES" (MODIFICADO CON ALERTA) ---
+        function mostrarLoader(show) { document.getElementById('admin-loader').style.display = show ? 'block' : 'none'; }
+        
+        function mostrarMensajeAdmin(tipo, texto) {
+            const m = document.getElementById('admin-mensaje');
+            if (!tipo) { m.style.display = 'none'; return; }
+            m.className = tipo; m.textContent = texto; m.style.display = 'block';
+            setTimeout(() => { if(m.textContent === texto) m.style.display = 'none'; }, 5000);
+        }
+
+        // --- JUGADORES ---
         document.getElementById('form-registrar-jugador').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // 1. Validación preventiva local (si la lista está cargada)
-            const nombreInput = document.getElementById('reg-nombre').value.trim();
-            if (listaJugadoresCache.length > 0) {
-                const existeLocalmente = listaJugadoresCache.some(j => j.nombre.toLowerCase() === nombreInput.toLowerCase());
-                if (existeLocalmente) {
-                    alert('⚠️ ALERTA: El jugador "' + nombreInput + '" ya existe en la lista cargada.');
-                    return; // Detiene el proceso
-                }
+            const nombre = document.getElementById('reg-nombre').value.trim();
+            // Validación local duplicados
+            if (listaJugadoresCache.some(j => j.nombre.toLowerCase() === nombre.toLowerCase())) {
+                alert('⚠️ El jugador ya existe en la lista cargada.'); return;
             }
-
-            const form = e.target;
             const formData = new FormData();
             formData.append('accion', 'registrarJugador');
-            formData.append('nombre', nombreInput);
+            formData.append('nombre', nombre);
             formData.append('codigo', document.getElementById('reg-codigo-temporada').value);
             formData.append('telefono', document.getElementById('reg-telefono').value);
             formData.append('pagoInicial', document.getElementById('reg-pago').value);
-            
-            try {
-                await llamarAppsScript(formData);
-                // Si llega aquí, todo salió bien
-                form.reset();
-                alert('✅ Jugador registrado exitosamente.'); 
-
-                // Recargar la lista si ya estaba cargada
-                if (listaJugadoresCache.length > 0) {
-                    btnCargarJugadores.click();
-                }
-
-            } catch (err) { 
-                // AQUÍ CAPTURAMOS EL ERROR DEL SERVIDOR (NOMBRE DUPLICADO)
-                if (err.message && (err.message.toLowerCase().includes('ya existe') || err.message.toLowerCase().includes('ya está registrado'))) {
-                    alert('⛔ ALERTA: ' + err.message);
-                } 
-                // Si es otro error, ya se muestra en el mensaje rojo del panel
-            }
+            try { await llamarAppsScript(formData); e.target.reset(); if(listaJugadoresCache.length>0) document.getElementById('btn-cargar-jugadores').click(); } catch(err) {}
         });
 
         document.getElementById('form-registrar-pago').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const form = e.target;
             const formData = new FormData();
             formData.append('accion', 'registrarPago');
             formData.append('codigo', document.getElementById('pago-codigo-temporada').value);
             formData.append('monto', document.getElementById('pago-monto').value);
-            
+            try { await llamarAppsScript(formData); e.target.reset(); if(listaJugadoresCache.length>0) document.getElementById('btn-cargar-jugadores').click(); } catch(err) {}
+        });
+
+        // Visor Jugadores
+        document.getElementById('btn-cargar-jugadores').addEventListener('click', async () => {
             try {
-                await llamarAppsScript(formData);
-                form.reset();
-                if (listaJugadoresCache.length > 0) {
-                      btnCargarJugadores.click();
-                }
-            } catch (err) { }
-        });
-        
-        // --- 5B. Visor de Jugadores ---
-        const visorContainer = document.getElementById('visor-jugadores-container');
-        const btnCargarJugadores = document.getElementById('btn-cargar-jugadores');
-        const filtroInput = document.getElementById('filtro-jugadores');
-        const listaJugadoresContainer = document.getElementById('lista-jugadores');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const btnCerrarModal = document.getElementById('btn-cerrar-modal');
-
-        btnCargarJugadores.addEventListener('click', async () => {
-            const formData = new FormData();
-            formData.append('accion', 'getJugadores');
-            try {
-                const data = await llamarAppsScript(formData);
-                listaJugadoresCache = data.jugadores; 
-                dibujarListaJugadores(listaJugadoresCache);
-                visorContainer.style.display = 'block';
-                btnCargarJugadores.textContent = 'Actualizar Lista';
-            } catch (err) { }
+                const data = await llamarAppsScript(new FormData()); // accion vacia no, hay que ponerla
+                const fd = new FormData(); fd.append('accion', 'getJugadores');
+                const res = await llamarAppsScript(fd);
+                listaJugadoresCache = res.jugadores;
+                dibujarJugadores(listaJugadoresCache);
+                document.getElementById('visor-jugadores-container').style.display = 'block';
+            } catch(err){}
         });
 
-        filtroInput.addEventListener('keyup', () => {
-            const filtro = filtroInput.value.toLowerCase();
-            const jugadoresFiltrados = listaJugadoresCache.filter(j => 
-                j.nombre.toLowerCase().includes(filtro) || 
-                j.codigo.toLowerCase().includes(filtro)
-            );
-            dibujarListaJugadores(jugadoresFiltrados);
+        document.getElementById('filtro-jugadores').addEventListener('keyup', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtrados = listaJugadoresCache.filter(j => j.nombre.toLowerCase().includes(val) || j.codigo.toLowerCase().includes(val));
+            dibujarJugadores(filtrados);
         });
 
-        function dibujarListaJugadores(jugadores) {
-            listaJugadoresContainer.innerHTML = ''; 
-            if (jugadores.length === 0) {
-                listaJugadoresContainer.innerHTML = '<p style="text-align:center; color:#777; padding: 10px;">No se encontraron jugadores.</p>';
-                return;
-            }
-            jugadores.forEach((jugador) => {
-                const item = document.createElement('div');
-                item.className = 'jugador-item';
-                item.dataset.codigo = jugador.codigo; 
-                item.innerHTML = `
-                    <span class="jugador-item-nombre">${jugador.nombre}</span>
-                    <span class="jugador-item-codigo">${jugador.codigo}</span>
-                `;
-                listaJugadoresContainer.appendChild(item);
+        function dibujarJugadores(lista) {
+            const cont = document.getElementById('lista-jugadores'); cont.innerHTML = '';
+            lista.forEach(j => {
+                cont.innerHTML += `<div class="jugador-item" onclick='verJugador(${JSON.stringify(j)})'><span style="font-weight:500">${j.nombre}</span><span style="font-size:0.9em; background:#eee; padding:2px 5px; border-radius:4px;">${j.codigo}</span></div>`;
             });
         }
-
-        listaJugadoresContainer.addEventListener('click', (e) => {
-            const item = e.target.closest('.jugador-item');
-            if (item) {
-                const codigo = item.dataset.codigo;
-                const jugador = listaJugadoresCache.find(j => j.codigo === codigo);
-                if (jugador) {
-                    mostrarModalDetalles(jugador);
-                }
-            }
-        });
-
-        function mostrarModalDetalles(jugador) {
-            const formatoMoneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
-            
-            document.getElementById('modal-nombre').textContent = jugador.nombre;
-            document.getElementById('modal-codigo').textContent = jugador.codigo;
-            document.getElementById('modal-telefono').textContent = jugador.telefono || 'No registrado';
-            document.getElementById('modal-pagado').textContent = formatoMoneda.format(jugador.pagado);
-            document.getElementById('modal-debe').textContent = formatoMoneda.format(jugador.debe);
-            
-            document.getElementById('modal-debe').className = jugador.debe > 0 ? 'debe' : '';
-            document.getElementById('modal-pagado').className = jugador.pagado > 0 ? 'pagado' : '';
-            
-            modalOverlay.style.display = 'flex';
-        }
         
-        btnCerrarModal.addEventListener('click', () => {
-            modalOverlay.style.display = 'none';
-        });
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                modalOverlay.style.display = 'none';
-            }
+        window.verJugador = (j) => {
+            const fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
+            document.getElementById('modal-nombre').textContent = j.nombre;
+            document.getElementById('modal-codigo').textContent = j.codigo;
+            document.getElementById('modal-telefono').textContent = j.telefono;
+            document.getElementById('modal-pagado').textContent = fmt.format(j.pagado);
+            document.getElementById('modal-debe').textContent = fmt.format(j.debe);
+            document.getElementById('modal-overlay').style.display = 'flex';
+        };
+        document.getElementById('btn-cerrar-modal').onclick = () => document.getElementById('modal-overlay').style.display = 'none';
+
+        // --- CÓDIGOS Y PLANTILLAS ---
+        // Plantillas
+        document.getElementById('btn-cargar-plantillas').addEventListener('click', async () => {
+            const fd = new FormData(); fd.append('accion', 'getPlantillas');
+            try {
+                const data = await llamarAppsScript(fd);
+                document.getElementById('msg-temporada').value = data.temporada;
+                document.getElementById('msg-semanal').value = data.semanal;
+            } catch(err){}
         });
 
-        
-        // --- 6. PESTAÑA "CÓDIGOS SEMANALES" ---
-        const resultadoAsignacionDiv = document.getElementById('resultado-asignacion');
+        window.copiarTexto = (id, btn) => {
+            const el = document.getElementById(id);
+            if(el.value.includes('Presiona')) { alert('Primero carga los textos.'); return; }
+            el.select(); el.setSelectionRange(0,99999);
+            navigator.clipboard.writeText(el.value).then(() => {
+                const txt = btn.textContent; btn.textContent = '✅ Copiado';
+                setTimeout(() => btn.textContent = txt, 2000);
+            });
+        };
+
+        // Códigos Semanales
         document.getElementById('form-asignar-codigo-semanal').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const form = e.target;
-            const formData = new FormData();
-            formData.append('accion', 'asignarCodigoSemanal');
-            formData.append('numQuinielas', document.getElementById('asig-num-quinielas').value);
-            
+            const fd = new FormData(); fd.append('accion', 'asignarCodigoSemanal');
+            fd.append('numQuinielas', document.getElementById('asig-num-quinielas').value);
             try {
-                const data = await llamarAppsScript(formData);
+                const data = await llamarAppsScript(fd);
                 document.getElementById('codigo-asignado-texto').textContent = data.codigo;
-                document.getElementById('saldo-asignado-texto').textContent = `(Saldo: ${data.saldo} quinielas)`;
-                resultadoAsignacionDiv.style.display = 'block';
-                form.reset();
-            } catch (err) { 
-                resultadoAsignacionDiv.style.display = 'none';
-            }
+                document.getElementById('saldo-asignado-texto').textContent = `(Saldo: ${data.saldo})`;
+                document.getElementById('resultado-asignacion').style.display = 'block';
+                e.target.reset();
+            } catch(err){}
         });
         
-        document.getElementById('btn-generar-codigos-semanales').addEventListener('click', async (e) => {
-            if (!confirm('¿Estás seguro?\n\nEsta acción borrará TODOS los códigos semanales, saldos y estados existentes (Columnas H, I, J) y los reemplazará con 1000 códigos nuevos.')) {
-                return; 
-            }
-            
-            const formData = new FormData();
-            formData.append('accion', 'generarCodigosSemanales');
-            try {
-                await llamarAppsScript(formData);
-            } catch (err) { }
-        });
+        document.getElementById('btn-copiar-codigo-semanal').onclick = (e) => {
+            const cod = document.getElementById('codigo-asignado-texto').textContent;
+            navigator.clipboard.writeText(cod).then(() => { e.target.textContent = '¡Copiado!'; setTimeout(()=>e.target.textContent='Copiar Código', 2000); });
+        };
 
-        resultadoAsignacionDiv.addEventListener('click', (e) => {
-            if (e.target.id === 'btn-copiar-codigo-semanal') {
-                const codigo = document.getElementById('codigo-asignado-texto').textContent;
-                copiarAlPortapapeles(codigo, e.target);
+        document.getElementById('btn-generar-codigos-semanales').onclick = async () => {
+            if(confirm('¿Borrar y regenerar 1000 códigos?')) {
+                const fd = new FormData(); fd.append('accion', 'generarCodigosSemanales');
+                await llamarAppsScript(fd);
             }
-        });
+        };
+
+        // --- CONFIGURACIÓN ---
+        document.getElementById('form-fecha-limite').onsubmit = async (e) => {
+            e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarFechaLimite'); 
+            fd.append('fechaLimite', document.getElementById('fecha-limite-input').value);
+            await llamarAppsScript(fd);
+        };
+        document.getElementById('form-jornada-activa').onsubmit = async (e) => {
+            e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarJornadaActiva');
+            fd.append('jornadaActiva', document.getElementById('jornada-activa-select').value);
+            await llamarAppsScript(fd);
+        };
+
+        // --- RESULTADOS ---
+        const selJornadaRes = document.getElementById('jornada-resultados-select');
+        const divPartidos = document.getElementById('partidos-resultados-container');
         
-        function copiarAlPortapapeles(texto, boton) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(texto).then(() => {
-                    boton.textContent = '¡Copiado!';
-                }).catch(err => {
-                    boton.textContent = 'Error al copiar';
-                }).finally(() => {
-                    setTimeout(() => {
-                        boton.textContent = 'Copiar Código';
-                    }, 2000);
+        selJornadaRes.onchange = async () => {
+            if(!selJornadaRes.value) { divPartidos.innerHTML = ''; return; }
+            const fd = new FormData(); fd.append('accion','cargarPartidosParaResultados'); fd.append('jornada', selJornadaRes.value);
+            try {
+                const data = await llamarAppsScript(fd);
+                divPartidos.innerHTML = '';
+                data.partidos.forEach((p, idx) => {
+                    divPartidos.innerHTML += `
+                        <div class="partido-resultado-item">
+                            <label>${p.local} vs ${p.visitante}</label>
+                            <input type="number" id="p${idx}_L" value="${p.res_local}" placeholder="L">
+                            <input type="number" id="p${idx}_V" value="${p.res_visita}" placeholder="V">
+                            <button class="btn-secondary" onclick="guardarPartido(${idx})">💾</button>
+                        </div>`;
                 });
-            } else {
-                const ta = document.createElement('textarea');
-                ta.value = texto;
-                document.body.appendChild(ta);
-                ta.select();
-                try {
-                    document.execCommand('copy');
-                    boton.textContent = '¡Copiado!';
-                } catch (err) {
-                    boton.textContent = 'Error';
-                }
-                document.body.removeChild(ta);
-                setTimeout(() => {
-                    boton.textContent = 'Copiar Código';
-                }, 2000);
-            }
-        }
+            } catch(err){ divPartidos.innerHTML=''; }
+        };
 
+        window.guardarPartido = async (idx) => {
+            const fd = new FormData(); fd.append('accion','actualizarPartidoUnico');
+            fd.append('jornada', selJornadaRes.value); fd.append('partidoIndex', idx);
+            fd.append('local', document.getElementById(`p${idx}_L`).value);
+            fd.append('visitante', document.getElementById(`p${idx}_V`).value);
+            await llamarAppsScript(fd);
+        };
 
-        // --- 7. PESTAÑA "CONFIGURACIÓN" ---
-        document.getElementById('form-fecha-limite').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData();
-            formData.append('accion', 'actualizarFechaLimite');
-            formData.append('fechaLimite', document.getElementById('fecha-limite-input').value);
-            try {
-                await llamarAppsScript(formData);
-            } catch (err) { }
-        });
-        
-        document.getElementById('form-jornada-activa').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData();
-            formData.append('accion', 'actualizarJornadaActiva');
-            formData.append('jornadaActiva', document.getElementById('jornada-activa-select').value);
-            try {
-                await llamarAppsScript(formData);
-            } catch (err) { }
-        });
+        // --- CALIFICAR ---
+        document.getElementById('btn-iniciar-tabla').onclick = async () => {
+            if(confirm('¿Reiniciar Tabla General? (Solo al inicio del torneo)')) {
+                const fd = new FormData(); fd.append('accion','iniciarTablaGeneral'); await llamarAppsScript(fd);
+            }
+        };
+        document.getElementById('form-calificar-jornada').onsubmit = async (e) => {
+            e.preventDefault(); if(!confirm('¿Calificar Jornada?')) return;
+            const fd = new FormData(); fd.append('accion','calificarJornada');
+            fd.append('jornada', document.getElementById('jornada-calificar-select').value);
+            await llamarAppsScript(fd);
+        };
 
-        // --- 8. PESTAÑA "RESULTADOS" ---
-        const jornadaResultadosSelect = document.getElementById('jornada-resultados-select');
-        const partidosResultadosContainer = document.getElementById('partidos-resultados-container');
-        
-        jornadaResultadosSelect.addEventListener('change', async () => {
-            const jornada = jornadaResultadosSelect.value;
-            if (!jornada) {
-                partidosResultadosContainer.innerHTML = '';
-                return;
-            }
-            
-            const formData = new FormData();
-            formData.append('accion', 'cargarPartidosParaResultados');
-            formData.append('jornada', jornada);
-            
-            try {
-                const data = await llamarAppsScript(formData);
-                partidosResultadosContainer.innerHTML = '';
-                data.partidos.forEach((partido, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'partido-resultado-item';
-                    item.innerHTML = `
-                        <label>${partido.local} vs ${partido.visitante}</label>
-                        <input type="number" id="p${index}_local" min="0" value="${partido.res_local || ''}" placeholder="L">
-                        <input type="number" id="p${index}_visita" min="0" value="${partido.res_visita || ''}" placeholder="V">
-                        <button type="button" class="btn-secondary btn-guardar-partido" data-index="${index}">Guardar</button>
-                    `;
-                    partidosResultadosContainer.appendChild(item);
-                });
-            } catch (err) {
-                partidosResultadosContainer.innerHTML = '';
-            }
-        });
-        
-        partidosResultadosContainer.addEventListener('click', async (e) => {
-            if (e.target.classList.contains('btn-guardar-partido')) {
-                const boton = e.target;
-                const index = boton.dataset.index;
-                const local = document.getElementById(`p${index}_local`).value;
-                const visitante = document.getElementById(`p${index}_visita`).value;
-                const jornada = jornadaResultadosSelect.value;
-                
-                const formData = new FormData();
-                formData.append('accion', 'actualizarPartidoUnico');
-                formData.append('jornada', jornada);
-                formData.append('partidoIndex', index);
-                formData.append('local', local);
-                formData.append('visitante', visitante);
-                
-                boton.disabled = true;
-                boton.textContent = '...';
-                try {
-                    await llamarAppsScript(formData);
-                    boton.textContent = 'Guardado';
-                    setTimeout(() => { boton.textContent = 'Guardar'; boton.disabled = false; }, 2000);
-                } catch (err) { 
-                    boton.textContent = 'Error';
-                    setTimeout(() => { boton.textContent = 'Guardar'; boton.disabled = false; }, 2000);
-                }
-            }
-        });
-
-        // --- 9. PESTAÑA "CALIFICAR (TEMPORADA)" ---
-        document.getElementById('btn-iniciar-tabla').addEventListener('click', async () => {
-            if (!confirm('¿Estás seguro?\n\nEsto borrará la TABLA_GENERAL y la volverá a crear con los jugadores de "Temporada" y "Ambos" registrados en CONTROL_TEMPORADA. Haz esto solo UNA VEZ.')) {
-                return;
-            }
-            const formData = new FormData();
-            formData.append('accion', 'iniciarTablaGeneral');
-            try {
-                await llamarAppsScript(formData);
-            } catch (err) { }
-        });
-        
-        document.getElementById('form-calificar-jornada').addEventListener('submit', async (e) => {
+        // --- CALIFICAR SEMANAL ---
+        document.getElementById('form-cargar-participantes-semanal').onsubmit = async (e) => {
             e.preventDefault();
-            const jornada = document.getElementById('jornada-calificar-select').value;
-            if (!confirm(`¿Estás seguro de que quieres calificar la Jornada ${jornada}?\n\nEsto recalculará todos los puntos y aciertos. Asegúrate de que TODOS los resultados de esa jornada estén guardados.`)) {
-                return;
-            }
-            const formData = new FormData();
-            formData.append('accion', 'calificarJornada');
-            formData.append('jornada', jornada);
+            document.getElementById('seccion-lista-participantes').style.display='none';
+            document.getElementById('seccion-resultados-semanal').style.display='none';
+            const fd = new FormData(); fd.append('accion','cargarParticipantesSemanal');
+            fd.append('jornada', document.getElementById('jornada-semanal-select').value);
             try {
-                await llamarAppsScript(formData);
-            } catch (err) { }
-        });
-        
-        // --- 10. PESTAÑA "QUINIELA SEMANAL ($30)" ---
-        const formCargarSemanal = document.getElementById('form-cargar-participantes-semanal');
-        const formCalcularSemanal = document.getElementById('form-calcular-semanal');
-        
-        formCargarSemanal.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            document.getElementById('seccion-lista-participantes').style.display = 'none';
-            document.getElementById('seccion-boton-calcular').style.display = 'none';
-            document.getElementById('seccion-resultados-semanal').style.display = 'none';
-            
-            const jornada = document.getElementById('jornada-semanal-select').value;
-            const formData = new FormData();
-            formData.append('accion', 'cargarParticipantesSemanal');
-            formData.append('jornada', jornada);
-            
-            try {
-                const data = await llamarAppsScript(formData);
-                const listaContainer = document.getElementById('participantes-semanal-lista');
-                listaContainer.innerHTML = ''; 
-                
+                const data = await llamarAppsScript(fd);
+                const lista = document.getElementById('participantes-semanal-lista'); lista.innerHTML='';
                 data.participantes.forEach(p => {
-                    const item = document.createElement('div');
-                    item.className = 'participante-check';
-                    item.innerHTML = `
-                        <label>
-                            <input type="checkbox" name="jugador_${p.codigo}" value="${p.codigo}" checked>
-                            ${p.nombre}
-                            <span class="tipo">${p.tipo}</span>
-                        </label>
-                    `;
-                    listaContainer.appendChild(item);
+                    lista.innerHTML += `<div class="participante-check"><label><input type="checkbox" name="jugador_${p.codigo}" value="${p.codigo}" checked> ${p.nombre} <span style="margin-left:auto; font-size:0.8em; color:#777;">${p.tipo}</span></label></div>`;
                 });
-                
-                document.getElementById('seccion-lista-participantes').style.display = 'block';
-                document.getElementById('seccion-boton-calcular').style.display = 'block';
-                
-            } catch (err) { }
-        });
-        
-        formCalcularSemanal.addEventListener('submit', async (e) => {
+                document.getElementById('seccion-lista-participantes').style.display='block';
+                document.getElementById('seccion-boton-calcular').style.display='block';
+            } catch(err){}
+        };
+
+        document.getElementById('form-calcular-semanal').onsubmit = async (e) => {
             e.preventDefault();
-            
-            const jornada = document.getElementById('jornada-semanal-select').value;
-            const formData = new FormData(formCalcularSemanal);
-            formData.append('accion', 'calcularGanadorSemanal');
-            formData.append('jornada', jornada);
-            
+            const fd = new FormData(e.target); fd.append('accion','calcularGanadorSemanal');
+            fd.append('jornada', document.getElementById('jornada-semanal-select').value);
             try {
-                const data = await llamarAppsScript(formData);
-                const tbody = document.getElementById('resultados-semanal-tbody');
-                tbody.innerHTML = ''; 
-                
-                data.resultados.forEach((r, index) => {
-                    const fila = document.createElement('tr');
-                    fila.innerHTML = `
-                        <td><b>${index + 1}</b></td>
-                        <td>${r.nombre}</td>
-                        <td><b>${r.puntos}</b></td>
-                        <td>${r.aciertosM}</td>
-                        <td>${r.aciertosR}</td>
-                    `;
-                    tbody.appendChild(fila);
+                const data = await llamarAppsScript(fd);
+                const tbody = document.getElementById('resultados-semanal-tbody'); tbody.innerHTML='';
+                data.resultados.forEach((r, i) => {
+                    tbody.innerHTML += `<tr><td>${i+1}</td><td>${r.nombre}</td><td><b>${r.puntos}</b></td><td>${r.aciertosM}</td><td>${r.aciertosR}</td></tr>`;
                 });
+                document.getElementById('seccion-resultados-semanal').style.display='block';
+            } catch(err){}
+        };
+
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - Quiniela</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f0f2f5; color: #333; -webkit-font-smoothing: antialiased; }
+        
+        /* --- Estilos Generales --- */
+        .admin-panel { max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
+        header { background-color: #2c3e50; color: white; padding: 20px 25px; text-align: center; }
+        header h1 { margin: 0; font-size: 1.5em; }
+
+        /* --- Pestañas --- */
+        .tab-nav { display: flex; background-color: #34495e; overflow-x: auto; white-space: nowrap; }
+        .tab-button { padding: 14px 20px; cursor: pointer; background-color: transparent; border: none; color: #ecf0f1; font-size: 0.9em; font-weight: 500; transition: 0.2s; border-bottom: 3px solid transparent; }
+        .tab-button:hover { background-color: #3b536b; }
+        .tab-button.active { color: white; border-bottom: 3px solid #3498db; }
+        .tab-content { display: none; padding: 25px; }
+        .tab-content.active { display: block; }
+        .tab-content h2 { font-size: 1.3em; color: #34495e; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; }
+
+        /* --- Login --- */
+        #login-screen { padding: 30px; text-align: center; }
+        #main-content { display: none; }
+
+        /* --- Formularios --- */
+        .form-section { background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 0.9em; }
+        input[type="text"], input[type="password"], input[type="number"], input[type="tel"], input[type="datetime-local"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; font-family: inherit; }
+        
+        button { padding: 12px 20px; font-size: 1em; font-weight: 700; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        button.btn-primary { background-color: #3498db; color: white; }
+        button.btn-primary:hover { background-color: #2980b9; }
+        button.btn-secondary { background-color: #2ecc71; color: white; }
+        button.btn-secondary:hover { background-color: #27ae60; }
+        button.btn-danger { background-color: #e74c3c; color: white; }
+        button.btn-warning { background-color: #f39c12; color: white; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+
+        /* --- Listas y Tablas --- */
+        #participantes-semanal-lista, #lista-jugadores { max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; padding: 10px; }
+        .participante-check, .jugador-item { padding: 10px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+        .jugador-item { cursor: pointer; }
+        .jugador-item:hover { background-color: #f9f9f9; }
+        
+        .partido-resultado-item { display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; padding: 10px; border: 1px solid #eee; margin-bottom: 10px; background: #fff; border-radius: 6px; align-items: center; }
+        .partido-resultado-item input { width: 60px; text-align: center; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+
+        /* --- Loader y Modal --- */
+        #admin-loader, #admin-mensaje { display: none; text-align: center; margin: 20px 0; font-weight: 500; }
+        #admin-mensaje { padding: 15px; border-radius: 6px; }
+        #admin-mensaje.success { background-color: #d4edda; color: #155724; }
+        #admin-mensaje.error { background-color: #f8d7da; color: #721c24; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; }
+        .modal-info-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .debe { color: #e74c3c; font-weight: bold; } .pagado { color: #2ecc71; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .admin-panel { margin: 0; border-radius: 0; min-height: 100vh; }
+            .partido-resultado-item { grid-template-columns: 1fr auto auto; }
+            .partido-resultado-item label { grid-column: 1 / -1; }
+            .partido-resultado-item button { justify-self: end; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-panel">
+        <header>
+            <h1>Panel de Administrador</h1>
+        </header>
+
+        <div id="login-screen">
+             <div class="form-section">
+                 <h2>Iniciar Sesión</h2>
+                 <div class="form-group">
+                     <label for="admin-password">Contraseña:</label>
+                     <input type="password" id="admin-password" placeholder="Tu contraseña secreta">
+                 </div>
+                 <button id="btn-login" class="btn-primary" style="width:100%;">Entrar</button>
+             </div>
+        </div>
+
+        <div id="main-content">
+            <nav class="tab-nav">
+                <button class="tab-button active" data-tab="tab-jugadores">Jugadores</button>
+                <button class="tab-button" data-tab="tab-codigos-semanales">Códigos & Plantillas</button>
+                <button class="tab-button" data-tab="tab-config">Configuración</button>
+                <button class="tab-button" data-tab="tab-resultados">Resultados</button>
+                <button class="tab-button" data-tab="tab-calificar">Calificar Temp.</button>
+                <button class="tab-button" data-tab="tab-calificar-semanal">Calif. Semanal</button>
+            </nav>
+
+            <div id="tab-jugadores" class="tab-content active">
+                <div class="form-section">
+                    <h2>Registrar Nuevo Jugador (Temporada)</h2>
+                    <form id="form-registrar-jugador">
+                        <div class="form-group">
+                            <label>Nombre Completo:</label> <input type="text" id="reg-nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Código de Acceso:</label> <input type="text" id="reg-codigo-temporada" placeholder="Ej. GUAYO" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono:</label> <input type="tel" id="reg-telefono">
+                        </div>
+                        <div class="form-group">
+                            <label>Pago Inicial ($):</label> <input type="number" id="reg-pago" value="0">
+                        </div>
+                        <button type="submit" class="btn-primary" style="width:100%;">Registrar Jugador</button>
+                    </form>
+                </div>
+                <div class="form-section">
+                    <h2>Registrar Pago Adicional</h2>
+                    <form id="form-registrar-pago">
+                        <div class="form-group">
+                            <label>Código de Acceso:</label> <input type="text" id="pago-codigo-temporada" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Monto ($):</label> <input type="number" id="pago-monto" required>
+                        </div>
+                        <button type="submit" class="btn-secondary" style="width:100%;">Registrar Abono</button>
+                    </form>
+                </div>
+                <div class="form-section">
+                    <h2>Visor de Jugadores</h2>
+                    <button id="btn-cargar-jugadores" class="btn-primary" style="width:100%; margin-bottom:10px;">Cargar Lista</button>
+                    <div id="visor-jugadores-container" style="display:none;">
+                        <input type="text" id="filtro-jugadores" placeholder="Buscar...">
+                        <div id="lista-jugadores"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tab-codigos-semanales" class="tab-content">
                 
-                document.getElementById('seccion-resultados-semanal').style.display = 'block';
+                <div class="form-section" style="border-top: 4px solid #3498db;">
+                    <h2 style="color: #2c3e50;">📢 Plantillas de Invitación</h2>
+                    <p style="color:#666; font-size:0.9em;">
+                        Estos mensajes se leen desde la hoja <b>CONFIG_TEMPORADA</b> (Celda B20 y B21).
+                    </p>
+                    <button id="btn-cargar-plantillas" class="btn-warning" style="width:100%; margin-bottom:20px;">🔄 Cargar Textos desde Excel</button>
+
+                    <div style="background: #eaf2f8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3 style="margin:0 0 10px 0; color: #2980b9;">🏆 Temporada ($500)</h3>
+                        <textarea id="msg-temporada" style="width:100%; height:120px; resize:none; margin-bottom:10px;" readonly>Presiona "Cargar Textos"...</textarea>
+                        <button type="button" onclick="copiarTexto('msg-temporada', this)" class="btn-primary" style="width:100%;">📋 Copiar Texto</button>
+                    </div>
+
+                    <div style="background: #e9f7ef; padding: 15px; border-radius: 8px;">
+                        <h3 style="margin:0 0 10px 0; color: #27ae60;">⚽ Semanal ($30)</h3>
+                        <textarea id="msg-semanal" style="width:100%; height:120px; resize:none; margin-bottom:10px;" readonly>Presiona "Cargar Textos"...</textarea>
+                        <button type="button" onclick="copiarTexto('msg-semanal', this)" class="btn-secondary" style="width:100%;">📋 Copiar Texto</button>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Asignar Código Semanal</h2>
+                    <form id="form-asignar-codigo-semanal">
+                        <div class="form-group">
+                            <label>Número de Quinielas:</label> <input type="number" id="asig-num-quinielas" value="1" min="1">
+                        </div>
+                        <button type="submit" class="btn-primary">Asignar Código</button>
+                    </form>
+                    <div id="resultado-asignacion" style="display:none; margin-top:20px; text-align:center;">
+                        <h3 id="codigo-asignado-texto" style="font-size:2em; margin:10px 0; color:#e74c3c;"></h3>
+                        <p id="saldo-asignado-texto"></p>
+                        <button type="button" id="btn-copiar-codigo-semanal" class="btn-secondary" style="width:100%;">Copiar Código</button>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <h2>Generar Códigos Nuevos</h2>
+                    <button id="btn-generar-codigos-semanales" class="btn-danger">Generar 1000 Códigos</button>
+                </div>
+            </div>
+
+            <div id="tab-config" class="tab-content">
+                <div class="form-section">
+                    <h2>Fecha Límite</h2>
+                    <form id="form-fecha-limite">
+                        <div class="form-group"><input type="datetime-local" id="fecha-limite-input" required></div>
+                        <button type="submit" class="btn-primary">Guardar Fecha</button>
+                    </form>
+                </div>
+                <div class="form-section">
+                    <h2>Jornada Activa</h2>
+                    <form id="form-jornada-activa">
+                        <div class="form-group">
+                            <select id="jornada-activa-select" required>
+                                <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                                <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                                <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                                <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                                <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                                <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Guardar Jornada</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="tab-resultados" class="tab-content">
+                <div class="form-section">
+                    <h2>Resultados Oficiales</h2>
+                    <select id="jornada-resultados-select">
+                        <option value="">Selecciona Jornada...</option>
+                        <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                        <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                        <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                        <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                        <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                        <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
+                    </select>
+                    <div id="partidos-resultados-container" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+
+            <div id="tab-calificar" class="tab-content">
+                 <div class="form-section">
+                    <h2>Iniciar Tabla General</h2>
+                    <p style="font-size:0.9em; color:#555;">(Solo UNA VEZ al inicio del torneo)</p>
+                    <button id="btn-iniciar-tabla" class="btn-warning" style="width:100%;">Iniciar Tabla</button>
+                </div>
+                <div class="form-section">
+                    <h2>Calificar Jornada</h2>
+                    <form id="form-calificar-jornada">
+                        <div class="form-group">
+                            <select id="jornada-calificar-select" required>
+                                <option value="">Selecciona Jornada...</option>
+                                <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                                <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                                <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                                <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                                <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                                <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-secondary" style="width:100%;">Calificar y Actualizar Tabla</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="tab-calificar-semanal" class="tab-content">
+                <div class="form-section">
+                    <h2>1. Cargar Participantes Semanales</h2>
+                    <form id="form-cargar-participantes-semanal">
+                        <div class="form-group">
+                            <select id="jornada-semanal-select" required>
+                                <option value="">Selecciona Jornada...</option>
+                                <option value="1">Jornada 1</option><option value="2">Jornada 2</option><option value="3">Jornada 3</option>
+                                <option value="4">Jornada 4</option><option value="5">Jornada 5</option><option value="6">Jornada 6</option>
+                                <option value="7">Jornada 7</option><option value="8">Jornada 8</option><option value="9">Jornada 9</option>
+                                <option value="10">Jornada 10</option><option value="11">Jornada 11</option><option value="12">Jornada 12</option>
+                                <option value="13">Jornada 13</option><option value="14">Jornada 14</option><option value="15">Jornada 15</option>
+                                <option value="16">Jornada 16</option><option value="17">Jornada 17</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Cargar Participantes</button>
+                    </form>
+                </div>
                 
-            } catch (err) { }
+                <form id="form-calcular-semanal">
+                    <div class="form-section" id="seccion-lista-participantes" style="display:none;">
+                        <h2>2. Confirmar Pagos ($30)</h2>
+                        <div id="participantes-semanal-lista"></div>
+                    </div>
+                    <div id="seccion-boton-calcular" style="display:none;">
+                        <button type="submit" class="btn-secondary" style="width:100%;">Calcular Ganador</button>
+                    </div>
+                </form>
+                
+                <div class="form-section" id="seccion-resultados-semanal" style="display:none;">
+                    <h2>Resultados Semanales</h2>
+                    <table id="resultados-semanal-tabla">
+                        <thead><tr><th>#</th><th>Nombre</th><th>Pts</th><th>M</th><th>R</th></tr></thead>
+                        <tbody id="resultados-semanal-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div> 
+        
+        <div id="admin-loader">Procesando...</div>
+        <div id="admin-mensaje"></div>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-nombre"></h3>
+            <div class="modal-info-item"><strong>Código:</strong> <span id="modal-codigo"></span></div>
+            <div class="modal-info-item"><strong>Tel:</strong> <span id="modal-telefono"></span></div>
+            <div class="modal-info-item"><strong>Pagado:</strong> <span id="modal-pagado" class="pagado"></span></div>
+            <div class="modal-info-item"><strong>Debe:</strong> <span id="modal-debe" class="debe"></span></div>
+            <button id="btn-cerrar-modal" class="btn-primary" style="width:100%; margin-top: 20px;">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURACIÓN ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"; // ¡PEGA TU URL AQUÍ!
+        
+        let adminPassword = "";
+        let listaJugadoresCache = []; 
+
+        // --- Pestañas ---
+        const tabs = document.querySelectorAll('.tab-button');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // --- LOGIN SEGURO ---
+        const loginBtn = document.getElementById('btn-login');
+        loginBtn.addEventListener('click', () => {
+            const passInput = document.getElementById('admin-password');
+            adminPassword = passInput.value.trim();
+            if (!adminPassword) { mostrarMensajeAdmin('error', 'Ingresa la contraseña.'); return; }
+
+            const formData = new FormData();
+            formData.append('accion', 'ping'); 
+            formData.append('adminPassword', adminPassword);
+            
+            mostrarLoader(true);
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    mostrarLoader(false);
+                    if (data.status === 'ok') {
+                        document.getElementById('login-screen').style.display = 'none';
+                        document.getElementById('main-content').style.display = 'block';
+                        mostrarMensajeAdmin('success', 'Bienvenido Administrador');
+                    } else {
+                        mostrarMensajeAdmin('error', data.message || 'Contraseña Incorrecta');
+                    }
+                }).catch(err => { mostrarLoader(false); mostrarMensajeAdmin('error', 'Error de conexión.'); });
+        });
+
+        // --- FUNCIONES COMUNES ---
+        async function llamarAppsScript(formData) {
+            mostrarLoader(true);
+            mostrarMensajeAdmin(false);
+            formData.append('adminPassword', adminPassword);
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.status === 'ok') {
+                    if(data.message) mostrarMensajeAdmin('success', data.message);
+                    return data;
+                } else { throw new Error(data.message); }
+            } catch (error) {
+                mostrarMensajeAdmin('error', error.message); throw error;
+            } finally { mostrarLoader(false); }
+        }
+
+        function mostrarLoader(show) { document.getElementById('admin-loader').style.display = show ? 'block' : 'none'; }
+        
+        function mostrarMensajeAdmin(tipo, texto) {
+            const m = document.getElementById('admin-mensaje');
+            if (!tipo) { m.style.display = 'none'; return; }
+            m.className = tipo; m.textContent = texto; m.style.display = 'block';
+            setTimeout(() => { if(m.textContent === texto) m.style.display = 'none'; }, 5000);
+        }
+
+        // --- JUGADORES ---
+        document.getElementById('form-registrar-jugador').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('reg-nombre').value.trim();
+            // Validación local duplicados
+            if (listaJugadoresCache.some(j => j.nombre.toLowerCase() === nombre.toLowerCase())) {
+                alert('⚠️ El jugador ya existe en la lista cargada.'); return;
+            }
+            const formData = new FormData();
+            formData.append('accion', 'registrarJugador');
+            formData.append('nombre', nombre);
+            formData.append('codigo', document.getElementById('reg-codigo-temporada').value);
+            formData.append('telefono', document.getElementById('reg-telefono').value);
+            formData.append('pagoInicial', document.getElementById('reg-pago').value);
+            try { await llamarAppsScript(formData); e.target.reset(); if(listaJugadoresCache.length>0) document.getElementById('btn-cargar-jugadores').click(); } catch(err) {}
+        });
+
+        document.getElementById('form-registrar-pago').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('accion', 'registrarPago');
+            formData.append('codigo', document.getElementById('pago-codigo-temporada').value);
+            formData.append('monto', document.getElementById('pago-monto').value);
+            try { await llamarAppsScript(formData); e.target.reset(); if(listaJugadoresCache.length>0) document.getElementById('btn-cargar-jugadores').click(); } catch(err) {}
+        });
+
+        // Visor Jugadores
+        document.getElementById('btn-cargar-jugadores').addEventListener('click', async () => {
+            try {
+                const data = await llamarAppsScript(new FormData()); // accion vacia no, hay que ponerla
+                const fd = new FormData(); fd.append('accion', 'getJugadores');
+                const res = await llamarAppsScript(fd);
+                listaJugadoresCache = res.jugadores;
+                dibujarJugadores(listaJugadoresCache);
+                document.getElementById('visor-jugadores-container').style.display = 'block';
+            } catch(err){}
+        });
+
+        document.getElementById('filtro-jugadores').addEventListener('keyup', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtrados = listaJugadoresCache.filter(j => j.nombre.toLowerCase().includes(val) || j.codigo.toLowerCase().includes(val));
+            dibujarJugadores(filtrados);
+        });
+
+        function dibujarJugadores(lista) {
+            const cont = document.getElementById('lista-jugadores'); cont.innerHTML = '';
+            lista.forEach(j => {
+                cont.innerHTML += `<div class="jugador-item" onclick='verJugador(${JSON.stringify(j)})'><span style="font-weight:500">${j.nombre}</span><span style="font-size:0.9em; background:#eee; padding:2px 5px; border-radius:4px;">${j.codigo}</span></div>`;
+            });
+        }
+        
+        window.verJugador = (j) => {
+            const fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
+            document.getElementById('modal-nombre').textContent = j.nombre;
+            document.getElementById('modal-codigo').textContent = j.codigo;
+            document.getElementById('modal-telefono').textContent = j.telefono;
+            document.getElementById('modal-pagado').textContent = fmt.format(j.pagado);
+            document.getElementById('modal-debe').textContent = fmt.format(j.debe);
+            document.getElementById('modal-overlay').style.display = 'flex';
+        };
+        document.getElementById('btn-cerrar-modal').onclick = () => document.getElementById('modal-overlay').style.display = 'none';
+
+        // --- CÓDIGOS Y PLANTILLAS ---
+        // Plantillas
+        document.getElementById('btn-cargar-plantillas').addEventListener('click', async () => {
+            const fd = new FormData(); fd.append('accion', 'getPlantillas');
+            try {
+                const data = await llamarAppsScript(fd);
+                document.getElementById('msg-temporada').value = data.temporada;
+                document.getElementById('msg-semanal').value = data.semanal;
+            } catch(err){}
+        });
+
+        window.copiarTexto = (id, btn) => {
+            const el = document.getElementById(id);
+            if(el.value.includes('Presiona')) { alert('Primero carga los textos.'); return; }
+            el.select(); el.setSelectionRange(0,99999);
+            navigator.clipboard.writeText(el.value).then(() => {
+                const txt = btn.textContent; btn.textContent = '✅ Copiado';
+                setTimeout(() => btn.textContent = txt, 2000);
+            });
+        };
+
+        // Códigos Semanales
+        document.getElementById('form-asignar-codigo-semanal').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData(); fd.append('accion', 'asignarCodigoSemanal');
+            fd.append('numQuinielas', document.getElementById('asig-num-quinielas').value);
+            try {
+                const data = await llamarAppsScript(fd);
+                document.getElementById('codigo-asignado-texto').textContent = data.codigo;
+                document.getElementById('saldo-asignado-texto').textContent = `(Saldo: ${data.saldo})`;
+                document.getElementById('resultado-asignacion').style.display = 'block';
+                e.target.reset();
+            } catch(err){}
         });
         
+        document.getElementById('btn-copiar-codigo-semanal').onclick = (e) => {
+            const cod = document.getElementById('codigo-asignado-texto').textContent;
+            navigator.clipboard.writeText(cod).then(() => { e.target.textContent = '¡Copiado!'; setTimeout(()=>e.target.textContent='Copiar Código', 2000); });
+        };
 
-        // --- 11. FUNCIONES AUXILIARES GLOBALES ---
-        const loader = document.getElementById('admin-loader');
-        const mensaje = document.getElementById('admin-mensaje');
-
-        function mostrarLoader(mostrar) {
-            loader.style.display = mostrar ? 'block' : 'none';
-        }
-
-        function mostrarMensajeAdmin(tipo, texto) {
-            if (tipo === false) {
-                mensaje.style.display = 'none';
-                return;
+        document.getElementById('btn-generar-codigos-semanales').onclick = async () => {
+            if(confirm('¿Borrar y regenerar 1000 códigos?')) {
+                const fd = new FormData(); fd.append('accion', 'generarCodigosSemanales');
+                await llamarAppsScript(fd);
             }
-            mensaje.className = tipo;
-            mensaje.textContent = texto;
-            mensaje.style.display = 'block';
-            
-            setTimeout(() => {
-                if (mensaje.textContent === texto) {
-                    mensaje.style.display = 'none';
-                }
-            }, 5000);
-        }
+        };
+
+        // --- CONFIGURACIÓN ---
+        document.getElementById('form-fecha-limite').onsubmit = async (e) => {
+            e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarFechaLimite'); 
+            fd.append('fechaLimite', document.getElementById('fecha-limite-input').value);
+            await llamarAppsScript(fd);
+        };
+        document.getElementById('form-jornada-activa').onsubmit = async (e) => {
+            e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarJornadaActiva');
+            fd.append('jornadaActiva', document.getElementById('jornada-activa-select').value);
+            await llamarAppsScript(fd);
+        };
+
+        // --- RESULTADOS ---
+        const selJornadaRes = document.getElementById('jornada-resultados-select');
+        const divPartidos = document.getElementById('partidos-resultados-container');
+        
+        selJornadaRes.onchange = async () => {
+            if(!selJornadaRes.value) { divPartidos.innerHTML = ''; return; }
+            const fd = new FormData(); fd.append('accion','cargarPartidosParaResultados'); fd.append('jornada', selJornadaRes.value);
+            try {
+                const data = await llamarAppsScript(fd);
+                divPartidos.innerHTML = '';
+                data.partidos.forEach((p, idx) => {
+                    divPartidos.innerHTML += `
+                        <div class="partido-resultado-item">
+                            <label>${p.local} vs ${p.visitante}</label>
+                            <input type="number" id="p${idx}_L" value="${p.res_local}" placeholder="L">
+                            <input type="number" id="p${idx}_V" value="${p.res_visita}" placeholder="V">
+                            <button class="btn-secondary" onclick="guardarPartido(${idx})">💾</button>
+                        </div>`;
+                });
+            } catch(err){ divPartidos.innerHTML=''; }
+        };
+
+        window.guardarPartido = async (idx) => {
+            const fd = new FormData(); fd.append('accion','actualizarPartidoUnico');
+            fd.append('jornada', selJornadaRes.value); fd.append('partidoIndex', idx);
+            fd.append('local', document.getElementById(`p${idx}_L`).value);
+            fd.append('visitante', document.getElementById(`p${idx}_V`).value);
+            await llamarAppsScript(fd);
+        };
+
+        // --- CALIFICAR ---
+        document.getElementById('btn-iniciar-tabla').onclick = async () => {
+            if(confirm('¿Reiniciar Tabla General? (Solo al inicio del torneo)')) {
+                const fd = new FormData(); fd.append('accion','iniciarTablaGeneral'); await llamarAppsScript(fd);
+            }
+        };
+        document.getElementById('form-calificar-jornada').onsubmit = async (e) => {
+            e.preventDefault(); if(!confirm('¿Calificar Jornada?')) return;
+            const fd = new FormData(); fd.append('accion','calificarJornada');
+            fd.append('jornada', document.getElementById('jornada-calificar-select').value);
+            await llamarAppsScript(fd);
+        };
+
+        // --- CALIFICAR SEMANAL ---
+        document.getElementById('form-cargar-participantes-semanal').onsubmit = async (e) => {
+            e.preventDefault();
+            document.getElementById('seccion-lista-participantes').style.display='none';
+            document.getElementById('seccion-resultados-semanal').style.display='none';
+            const fd = new FormData(); fd.append('accion','cargarParticipantesSemanal');
+            fd.append('jornada', document.getElementById('jornada-semanal-select').value);
+            try {
+                const data = await llamarAppsScript(fd);
+                const lista = document.getElementById('participantes-semanal-lista'); lista.innerHTML='';
+                data.participantes.forEach(p => {
+                    lista.innerHTML += `<div class="participante-check"><label><input type="checkbox" name="jugador_${p.codigo}" value="${p.codigo}" checked> ${p.nombre} <span style="margin-left:auto; font-size:0.8em; color:#777;">${p.tipo}</span></label></div>`;
+                });
+                document.getElementById('seccion-lista-participantes').style.display='block';
+                document.getElementById('seccion-boton-calcular').style.display='block';
+            } catch(err){}
+        };
+
+        document.getElementById('form-calcular-semanal').onsubmit = async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target); fd.append('accion','calcularGanadorSemanal');
+            fd.append('jornada', document.getElementById('jornada-semanal-select').value);
+            try {
+                const data = await llamarAppsScript(fd);
+                const tbody = document.getElementById('resultados-semanal-tbody'); tbody.innerHTML='';
+                data.resultados.forEach((r, i) => {
+                    tbody.innerHTML += `<tr><td>${i+1}</td><td>${r.nombre}</td><td><b>${r.puntos}</b></td><td>${r.aciertosM}</td><td>${r.aciertosR}</td></tr>`;
+                });
+                document.getElementById('seccion-resultados-semanal').style.display='block';
+            } catch(err){}
+        };
 
     </script>
 </body>
