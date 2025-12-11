@@ -14,7 +14,32 @@
         .admin-panel { max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
         header { background-color: #2c3e50; color: white; padding: 20px 25px; text-align: center; }
         header h1 { margin: 0; font-size: 1.5em; }
+       /* Estilo para el botón FIJO anaranjado */
+    .btn-regreso-fijo {
+        position: fixed; /* Se queda pegado aunque bajes la pantalla */
+        top: 20px;       /* Distancia desde el techo */
+        right: 20px;     /* Distancia desde la derecha */
+        
+        /* Colores */
+        background-color: #ffcc80; /* Anaranjado claro */
+        color: #5d4037;            /* Letra café oscuro */
+        border: 2px solid #ffffff; /* Borde blanco */
+        
+        /* Diseño */
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 30px; 
+        font-family: sans-serif;
+        font-weight: bold;
+        font-size: 14px;
+        z-index: 9999; /* Siempre visible encima de todo */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+    }
 
+    .btn-regreso-fijo:hover {
+        background-color: #ffb74d; 
+        transform: scale(1.05);    
+    }
         /* --- Pestañas --- */
         .tab-nav { display: flex; background-color: #34495e; overflow-x: auto; white-space: nowrap; }
         .tab-button { padding: 14px 20px; cursor: pointer; background-color: transparent; border: none; color: #ecf0f1; font-size: 0.9em; font-weight: 500; transition: 0.2s; border-bottom: 3px solid transparent; }
@@ -77,7 +102,9 @@
     </style>
 </head>
 <body>
-
+<a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">
+    ↩ Regresar
+</a>
     <div class="admin-panel">
         <header>
             <h1>Panel de Administrador</h1>
