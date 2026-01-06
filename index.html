@@ -38,7 +38,7 @@
 
     .btn-regreso-fijo:hover {
         background-color: #ffb74d; 
-        transform: scale(1.05);    
+        transform: scale(1.05);     
     }
         /* --- Pestañas --- */
         .tab-nav { display: flex; background-color: #34495e; overflow-x: auto; white-space: nowrap; }
@@ -338,7 +338,7 @@
 
     <script>
         // --- CONFIGURACIÓN ---
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"; // ¡PEGA TU URL AQUÍ!
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"; 
         
         let adminPassword = "";
         let listaJugadoresCache = []; 
@@ -432,10 +432,10 @@
             try { await llamarAppsScript(formData); e.target.reset(); if(listaJugadoresCache.length>0) document.getElementById('btn-cargar-jugadores').click(); } catch(err) {}
         });
 
-        // Visor Jugadores
+        // Visor Jugadores (CORREGIDO)
         document.getElementById('btn-cargar-jugadores').addEventListener('click', async () => {
             try {
-                const data = await llamarAppsScript(new FormData()); // accion vacia no, hay que ponerla
+                // Se eliminó la línea que enviaba la petición vacía
                 const fd = new FormData(); fd.append('accion', 'getJugadores');
                 const res = await llamarAppsScript(fd);
                 listaJugadoresCache = res.jugadores;
