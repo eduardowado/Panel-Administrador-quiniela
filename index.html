@@ -14,32 +14,17 @@
         .admin-panel { max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
         header { background-color: #2c3e50; color: white; padding: 20px 25px; text-align: center; }
         header h1 { margin: 0; font-size: 1.5em; }
-       /* Estilo para el botón FIJO anaranjado */
-    .btn-regreso-fijo {
-        position: fixed; /* Se queda pegado aunque bajes la pantalla */
-        top: 20px;       /* Distancia desde el techo */
-        right: 20px;     /* Distancia desde la derecha */
         
-        /* Colores */
-        background-color: #ffcc80; /* Anaranjado claro */
-        color: #5d4037;            /* Letra café oscuro */
-        border: 2px solid #ffffff; /* Borde blanco */
-        
-        /* Diseño */
-        text-decoration: none;
-        padding: 10px 15px;
-        border-radius: 30px; 
-        font-family: sans-serif;
-        font-weight: bold;
-        font-size: 14px;
-        z-index: 9999; /* Siempre visible encima de todo */
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
-    }
+        /* Botón Regreso Fijo */
+        .btn-regreso-fijo {
+            position: fixed; top: 20px; right: 20px;
+            background-color: #ffcc80; color: #5d4037; border: 2px solid #ffffff;
+            text-decoration: none; padding: 10px 15px; border-radius: 30px; 
+            font-family: sans-serif; font-weight: bold; font-size: 14px;
+            z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+        }
+        .btn-regreso-fijo:hover { background-color: #ffb74d; transform: scale(1.05); }
 
-    .btn-regreso-fijo:hover {
-        background-color: #ffb74d; 
-        transform: scale(1.05);     
-    }
         /* --- Pestañas --- */
         .tab-nav { display: flex; background-color: #34495e; overflow-x: auto; white-space: nowrap; }
         .tab-button { padding: 14px 20px; cursor: pointer; background-color: transparent; border: none; color: #ecf0f1; font-size: 0.9em; font-weight: 500; transition: 0.2s; border-bottom: 3px solid transparent; }
@@ -82,16 +67,20 @@
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #f4f4f4; }
 
-        /* --- Loader y Modal --- */
+        /* --- Loader y Mensajes --- */
         #admin-loader, #admin-mensaje { display: none; text-align: center; margin: 20px 0; font-weight: 500; }
         #admin-mensaje { padding: 15px; border-radius: 6px; }
         #admin-mensaje.success { background-color: #d4edda; color: #155724; }
         #admin-mensaje.error { background-color: #f8d7da; color: #721c24; }
 
+        /* --- MODAL (Estilo mejorado) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; }
+        .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-info-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
         .debe { color: #e74c3c; font-weight: bold; } .pagado { color: #2ecc71; font-weight: bold; }
+        
+        .modal-pago-section { background-color: #f1f8e9; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #c8e6c9; }
+        .modal-pago-section h4 { margin-top: 0; color: #2e7d32; margin-bottom: 10px; }
 
         @media (max-width: 600px) {
             .admin-panel { margin: 0; border-radius: 0; min-height: 100vh; }
@@ -102,9 +91,8 @@
     </style>
 </head>
 <body>
-    <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">
-    ↩ Regresar
-</a>
+    <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
+    
     <div class="admin-panel">
         <header>
             <h1>Panel de Administrador</h1>
@@ -150,30 +138,19 @@
                         <button type="submit" class="btn-primary" style="width:100%;">Registrar Jugador</button>
                     </form>
                 </div>
+                
                 <div class="form-section">
-                    <h2>Registrar Pago Adicional</h2>
-                    <form id="form-registrar-pago">
-                        <div class="form-group">
-                            <label>Código de Acceso:</label> <input type="text" id="pago-codigo-temporada" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Monto ($):</label> <input type="number" id="pago-monto" required>
-                        </div>
-                        <button type="submit" class="btn-secondary" style="width:100%;">Registrar Abono</button>
-                    </form>
-                </div>
-                <div class="form-section">
-                    <h2>Visor de Jugadores</h2>
+                    <h2>Visor de Jugadores (Pagos aquí)</h2>
+                    <p style="font-size: 0.9em; color:#666;">Selecciona un jugador para ver detalles o <b>registrar abonos</b>.</p>
                     <button id="btn-cargar-jugadores" class="btn-primary" style="width:100%; margin-bottom:10px;">Cargar Lista</button>
                     <div id="visor-jugadores-container" style="display:none;">
-                        <input type="text" id="filtro-jugadores" placeholder="Buscar...">
+                        <input type="text" id="filtro-jugadores" placeholder="Buscar jugador por nombre o código...">
                         <div id="lista-jugadores"></div>
                     </div>
                 </div>
             </div>
             
             <div id="tab-codigos-semanales" class="tab-content">
-                
                 <div class="form-section" style="border-top: 4px solid #3498db;">
                     <h2 style="color: #2c3e50;">📢 Plantillas de Invitación</h2>
                     <p style="color:#666; font-size:0.9em;">
@@ -327,21 +304,41 @@
 
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal-box">
-            <h3 id="modal-nombre"></h3>
+            <h3 id="modal-nombre" style="text-align: center; color:#2c3e50; border-bottom:1px solid #eee; padding-bottom:10px;"></h3>
+            
             <div class="modal-info-item"><strong>Código:</strong> <span id="modal-codigo"></span></div>
             <div class="modal-info-item"><strong>Tel:</strong> <span id="modal-telefono"></span></div>
-            <div class="modal-info-item"><strong>Pagado:</strong> <span id="modal-pagado" class="pagado"></span></div>
-            <div class="modal-info-item"><strong>Debe:</strong> <span id="modal-debe" class="debe"></span></div>
-            <button id="btn-cerrar-modal" class="btn-primary" style="width:100%; margin-top: 20px;">Cerrar</button>
+            <div class="modal-info-item"><strong>Pagado Total:</strong> <span id="modal-pagado" class="pagado"></span></div>
+            <div class="modal-info-item"><strong>Resta por pagar:</strong> <span id="modal-debe" class="debe"></span></div>
+            
+            <div class="modal-pago-section">
+                <h4>💰 Registrar Pago Nuevo</h4>
+                <div class="form-group">
+                    <label>Monto a Abonar:</label>
+                    <input type="number" id="modal-pago-monto" placeholder="$0.00">
+                </div>
+                <div class="form-group">
+                    <label>Método de Pago:</label>
+                    <select id="modal-pago-metodo">
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Efectivo">Efectivo</option>
+                    </select>
+                </div>
+                <button id="btn-modal-registrar-pago" class="btn-secondary" style="width:100%;">Registrar Abono</button>
+            </div>
+
+            <button id="btn-cerrar-modal" class="btn-primary" style="width:100%; margin-top: 20px; background-color: #7f8c8d;">Cerrar Ventana</button>
         </div>
     </div>
 
     <script>
         // --- CONFIGURACIÓN ---
+        // ¡PEGA AQUÍ TU URL DEL SCRIPT!
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec"; 
         
         let adminPassword = "";
         let listaJugadoresCache = []; 
+        let jugadorSeleccionadoActual = null; // Variable para saber a quién cobrarle
 
         // --- Pestañas ---
         const tabs = document.querySelectorAll('.tab-button');
@@ -423,19 +420,9 @@
             try { await llamarAppsScript(formData); e.target.reset(); if(listaJugadoresCache.length>0) document.getElementById('btn-cargar-jugadores').click(); } catch(err) {}
         });
 
-        document.getElementById('form-registrar-pago').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData();
-            formData.append('accion', 'registrarPago');
-            formData.append('codigo', document.getElementById('pago-codigo-temporada').value);
-            formData.append('monto', document.getElementById('pago-monto').value);
-            try { await llamarAppsScript(formData); e.target.reset(); if(listaJugadoresCache.length>0) document.getElementById('btn-cargar-jugadores').click(); } catch(err) {}
-        });
-
-        // Visor Jugadores (CORREGIDO)
+        // Visor Jugadores (Cargar Lista)
         document.getElementById('btn-cargar-jugadores').addEventListener('click', async () => {
             try {
-                // Se eliminó la línea que enviaba la petición vacía
                 const fd = new FormData(); fd.append('accion', 'getJugadores');
                 const res = await llamarAppsScript(fd);
                 listaJugadoresCache = res.jugadores;
@@ -444,29 +431,78 @@
             } catch(err){}
         });
 
-        document.getElementById('filtro-jugadores').addEventListener('keyup', (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtrados = listaJugadoresCache.filter(j => j.nombre.toLowerCase().includes(val) || j.codigo.toLowerCase().includes(val));
+        // Buscador Inteligente
+        document.getElementById('filtro-jugadores').addEventListener('input', (e) => {
+            const textoBusqueda = e.target.value.toLowerCase();
+            if (!listaJugadoresCache || listaJugadoresCache.length === 0) return; 
+
+            const filtrados = listaJugadoresCache.filter(j => {
+                const nombre = (j.nombre || "").toString().toLowerCase();
+                const codigo = (j.codigo || "").toString().toLowerCase();
+                return nombre.includes(textoBusqueda) || codigo.includes(textoBusqueda);
+            });
             dibujarJugadores(filtrados);
         });
 
         function dibujarJugadores(lista) {
             const cont = document.getElementById('lista-jugadores'); cont.innerHTML = '';
             lista.forEach(j => {
-                cont.innerHTML += `<div class="jugador-item" onclick='verJugador(${JSON.stringify(j)})'><span style="font-weight:500">${j.nombre}</span><span style="font-size:0.9em; background:#eee; padding:2px 5px; border-radius:4px;">${j.codigo}</span></div>`;
+                cont.innerHTML += `<div class="jugador-item" onclick='verJugador(${JSON.stringify(j)})'>
+                    <span style="font-weight:500">${j.nombre}</span>
+                    <span style="font-size:0.9em; background:#eee; padding:2px 5px; border-radius:4px;">${j.codigo}</span>
+                </div>`;
             });
         }
         
+        // --- LÓGICA DEL MODAL Y PAGO ---
         window.verJugador = (j) => {
+            jugadorSeleccionadoActual = j; // Guardamos al jugador actual en variable global
+            
             const fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN'});
             document.getElementById('modal-nombre').textContent = j.nombre;
             document.getElementById('modal-codigo').textContent = j.codigo;
             document.getElementById('modal-telefono').textContent = j.telefono;
             document.getElementById('modal-pagado').textContent = fmt.format(j.pagado);
             document.getElementById('modal-debe').textContent = fmt.format(j.debe);
+            
+            // Limpiar campos de pago anteriores
+            document.getElementById('modal-pago-monto').value = '';
+            
             document.getElementById('modal-overlay').style.display = 'flex';
         };
-        document.getElementById('btn-cerrar-modal').onclick = () => document.getElementById('modal-overlay').style.display = 'none';
+
+        // Click en el botón "Registrar Abono" dentro del Modal
+        document.getElementById('btn-modal-registrar-pago').onclick = async () => {
+            if(!jugadorSeleccionadoActual) return;
+
+            const monto = document.getElementById('modal-pago-monto').value;
+            const metodo = document.getElementById('modal-pago-metodo').value;
+
+            if(!monto || monto <= 0) { alert("Ingresa un monto válido"); return; }
+
+            if(confirm(`¿Confirmar pago de $${monto} para ${jugadorSeleccionadoActual.nombre}?`)) {
+                const formData = new FormData();
+                formData.append('accion', 'registrarPago');
+                formData.append('codigo', jugadorSeleccionadoActual.codigo);
+                formData.append('nombre', jugadorSeleccionadoActual.nombre); // Enviamos nombre para Col E
+                formData.append('monto', monto);
+                formData.append('metodo', metodo); // Enviamos metodo para Col F
+
+                try {
+                    await llamarAppsScript(formData);
+                    document.getElementById('modal-overlay').style.display = 'none'; // Cerrar modal
+                    // Opcional: Recargar lista para ver saldo actualizado
+                    document.getElementById('btn-cargar-jugadores').click(); 
+                } catch(err) {
+                    // Error ya manejado por llamarAppsScript
+                }
+            }
+        };
+
+        document.getElementById('btn-cerrar-modal').onclick = () => {
+            document.getElementById('modal-overlay').style.display = 'none';
+            jugadorSeleccionadoActual = null;
+        }
 
         // --- CÓDIGOS Y PLANTILLAS ---
         // Plantillas
