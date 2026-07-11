@@ -74,9 +74,6 @@
         .btn-bloquear { background-color: #ff4d4d; color: white; }
         .btn-permitir { background-color: #2ecc71; color: white; }
         .btn-limpiar { background-color: #95a5a6; color: white; }
-
-
-
     </style>
 </head>
 <body>
@@ -154,7 +151,8 @@
                     <h2>Visor Temporada</h2>
                     <button id="btn-cargar-jugadores" class="btn-primary" style="width:100%; margin-bottom:10px;">Cargar Lista</button>
                     <div id="visor-jugadores-container" style="display:none;">
-                        <input type="text" id="filtro-jugadores" placeholder="Buscar...">
+                        <!-- BUSCADOR CON EL FILTRADO ONKEYUP YA ACTIVADO -->
+                        <input type="text" id="filtro-jugadores" placeholder="Buscar..." onkeyup="filtrarJugadoresLocal()">
                         <div id="lista-jugadores"></div>
                     </div>
                 </div>
@@ -254,6 +252,7 @@
         <div id="admin-mensaje"></div>
     </div>
 
+    <!-- Modal Gestión Semanal -->
     <div class="modal-overlay" id="modal-gestion-semanal">
         <div class="modal-box">
             <h3 id="gs-nombre" style="margin-bottom:5px;">Nombre</h3>
@@ -263,6 +262,21 @@
                 <p id="gs-deuda-cont" style="color:#e74c3c; font-weight:bold;"></p>
                 <p>Wallet (Sobra): <b id="gs-wallet" style="color:#27ae60;">$0.00</b></p>
             </div>
+
+            <!-- SECCIÓN NUEVA: EDITAR PERFIL -->
+            <div style="background:#e8f4fd; padding:15px; border-radius:10px; margin:15px 0; border:1px solid #b3e5fc;">
+                <label style="font-size:0.8em; font-weight:bold; color:#0277bd;">✏️ EDITAR NOMBRE O CÓDIGO:</label>
+                <div class="form-group" style="margin-top:8px; margin-bottom:10px;">
+                    <label style="font-size:0.8em; margin-bottom:2px;">Nombre de Usuario:</label>
+                    <input type="text" id="gs-edit-nombre" placeholder="Ej: Daniel">
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label style="font-size:0.8em; margin-bottom:2px;">Código de Acceso:</label>
+                    <input type="text" id="gs-edit-codigo" placeholder="Ej: 250592">
+                </div>
+                <button class="btn-primary" onclick="guardarEdicionPerfil()" style="width:100%; background-color:#3498db; padding:8px; font-size:14px;">Actualizar Perfil</button>
+            </div>
+
             <label style="font-size:0.8em; font-weight:bold;">💰 COBRAR DINERO:</label>
             <div style="display:flex; gap:5px; margin-bottom:15px;"><input type="number" id="gs-monto-pago" placeholder="$"><button class="btn-secondary" onclick="ejecutarAccionSemanal('pago')">Cobrar</button></div>
             <label style="font-size:0.8em; font-weight:bold;">🚩 FIAR CRÉDITOS:</label>
@@ -271,10 +285,11 @@
                 <label style="font-size:0.8em; font-weight:bold; color:#c53030;">⚠️ QUITAR (ERROR):</label>
                 <div style="display:flex; gap:5px;"><input type="number" id="gs-cant-quitar" placeholder="Cant."><button class="btn-danger" onclick="ejecutarAccionSemanal('corregir')" style="background:#c53030;">Quitar</button></div>
             </div>
-            <button class="btn-primary" onclick="cerrarGestionSemanal()" style="margin-top:20px; background:#7f8c8d; width:100%;">Cerrar</button>
+            <button class="btn-primary" onclick="cerrarGestionSemanal()" style="margin-top:20px; background:#7f8c8d; width:100%;">Cerrar Ventana</button>
         </div>
     </div>
 
+    <!-- Modal Gestión Temporada -->
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal-box">
             <h3 id="modal-nombre" style="text-align:center;"></h3>
@@ -334,7 +349,7 @@
                     document.getElementById('main-content').style.display = 'block';
                     cargarControlSemanal();
                 } else { alert("Contraseña incorrecta"); }
-            } catch(e) { alert("Error de conexión"); }
+            } catch(e) { alert("Error de conexión: " + e.message); }
             mostrarLoader(false);
         };
 
@@ -359,21 +374,25 @@
                 const fd = new FormData(); fd.append('accion', 'getJugadoresSemanal');
                 const res = await llamarAppsScript(fd);
                 dibujarListaSemanal(res.jugadores);
-            } catch (e) { }
+            } catch (e) { 
+                alert("Error al cargar control semanal: " + e.message);
+            }
         }
 
         function dibujarListaSemanal(jugadores) {
             const cont = document.getElementById('lista-semanal-dinamica');
             let html = '';
-            jugadores.forEach(j => {
-                let esDeuda = j.estatus && j.estatus.includes("PENDIENTE");
-                let estilo = esDeuda ? "color:#e74c3c; font-weight:bold;" : "color:#27ae60; font-weight:bold;";
-                let jData = JSON.stringify(j).replace(/'/g, "&apos;");
-                html += `<div class="list-item" onclick='abrirGestionSemanal(${jData})'>
-                    <div><strong>${j.nombre}</strong><br><small>Cod: ${j.codigo}</small></div>
-                    <div style="text-align:right;">Quinielas: <b>${j.creditos}</b><br><small style="${estilo}">${j.estatus}</small></div>
-                </div>`;
-            });
+            if (jugadores && jugadores.forEach) {
+                jugadores.forEach(j => {
+                    let esDeuda = j.estatus && j.estatus.includes("PENDIENTE");
+                    let estilo = esDeuda ? "color:#e74c3c; font-weight:bold;" : "color:#27ae60; font-weight:bold;";
+                    let jData = JSON.stringify(j).replace(/'/g, "&apos;");
+                    html += `<div class="list-item" onclick='abrirGestionSemanal(${jData})'>
+                        <div><strong>${j.nombre}</strong><br><small>Cod: ${j.codigo}</small></div>
+                        <div style="text-align:right;">Quinielas: <b>${j.creditos}</b><br><small style="${estilo}">${j.estatus}</small></div>
+                    </div>`;
+                });
+            }
             cont.innerHTML = html || '<p style="text-align:center; padding:20px;">Sin participantes registrados.</p>';
         }
 
@@ -381,13 +400,59 @@
             const nombre = document.getElementById('new-sem-nombre').value.trim();
             const creditos = document.getElementById('new-sem-creditos').value;
             if (!nombre || creditos < 1) return alert("Faltan datos");
-            const fd = new FormData(); fd.append('accion', 'accionAsignarNuevoParticipante'); fd.append('nombre', nombre); fd.append('creditos', creditos); fd.append('metodo', metodo);
-            try { const res = await llamarAppsScript(fd); alert(res.message); document.getElementById('new-sem-nombre').value = ''; cargarControlSemanal(); } catch(e){}
+            
+            const fd = new FormData(); 
+            fd.append('accion', 'AsignarNuevoParticipante'); 
+            fd.append('nombre', nombre); 
+            fd.append('creditos', creditos); 
+            fd.append('metodo', metodo);
+            
+            try { 
+                const res = await llamarAppsScript(fd); 
+                let mensajeFinal = res.message || "¡Participante registrado con éxito!";
+                
+                let codigoGenerado = res.codigo;
+                if (!codigoGenerado && res.message) {
+                    const partes = res.message.split(':');
+                    if (partes.length > 1) {
+                        codigoGenerado = partes[partes.length - 1].trim();
+                    }
+                }
+                
+                if (codigoGenerado) {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        try {
+                            await navigator.clipboard.writeText(codigoGenerado);
+                            mensajeFinal += `\n\n📋 ¡El código [${codigoGenerado}] se ha copiado automáticamente a tu portapapeles!`;
+                            alert(mensajeFinal);
+                        } catch (errCopy) {
+                            prompt("¡Registrado! Copia el código generado desde aquí:", codigoGenerado);
+                        }
+                    } else {
+                        prompt("¡Registrado con éxito!\n\nCopia el código generado desde aquí:", codigoGenerado);
+                    }
+                } else {
+                    alert(mensajeFinal);
+                }
+                
+                document.getElementById('new-sem-nombre').value = ''; 
+                cargarControlSemanal(); 
+            } catch(e) {
+                alert("❌ Error al registrar participante: " + e.message);
+            }
         }
 
         async function fiarMasivo() {
             if(!confirm("¿Fiar 1 crédito a todos los que están en 0?")) return;
-            try { const fd = new FormData(); fd.append('accion', 'accionFiarMasivoCeroCreditos'); const res = await llamarAppsScript(fd); alert(res.message); cargarControlSemanal(); } catch(e){}
+            try { 
+                const fd = new FormData(); 
+                fd.append('accion', 'FiarMasivoCeroCreditos'); 
+                const res = await llamarAppsScript(fd); 
+                alert(res.message); 
+                cargarControlSemanal(); 
+            } catch(e) {
+                alert("❌ Error en fiar masivo: " + e.message);
+            }
         }
 
         function abrirGestionSemanal(j) {
@@ -396,8 +461,12 @@
             document.getElementById('gs-codigo').innerText = "COD: " + j.codigo;
             document.getElementById('gs-creditos').innerText = j.creditos;
             document.getElementById('gs-wallet').innerText = "$" + (parseFloat(j.wallet || 0).toFixed(2));
+            
+            document.getElementById('gs-edit-nombre').value = j.nombre;
+            document.getElementById('gs-edit-codigo').value = j.codigo;
+
             const dCont = document.getElementById('gs-deuda-cont');
-            if(j.estatus.includes("PENDIENTE")) { dCont.innerText = "🚩 DEUDA: " + j.estatus.replace("PENDIENTE:", ""); dCont.style.display = "block"; } else { dCont.style.display = "none"; }
+            if(j.estatus && j.estatus.includes("PENDIENTE")) { dCont.innerText = "🚩 DEUDA: " + j.estatus.replace("PENDIENTE:", ""); dCont.style.display = "block"; } else { dCont.style.display = "none"; }
             document.getElementById('modal-gestion-semanal').style.display = 'flex';
         }
 
@@ -410,18 +479,62 @@
                 fd.append('accion', 'registrarAbonoSemanalV2'); fd.append('monto', m); fd.append('jornada', '1');
             } else if (tipo === 'fiar') {
                 const c = document.getElementById('gs-cant-fiar').value; if(!c) return alert("Ingresa cantidad");
-                fd.append('accion', 'accionFiarCreditos'); fd.append('cantidad', c);
+                fd.append('accion', 'FiarCreditos'); 
+                fd.append('cantidad', c);
             } else {
                 const q = document.getElementById('gs-cant-quitar').value; if(!q) return alert("Ingresa cantidad");
                 if(!confirm("¿Quitar créditos y reducir deuda?")) return;
-                fd.append('accion', 'accionCorregirCreditos'); fd.append('cantidad', q);
+                fd.append('accion', 'CorregirCreditos'); 
+                fd.append('cantidad', q);
             }
-            try { const res = await llamarAppsScript(fd); alert(res.message); cerrarGestionSemanal(); cargarControlSemanal(); } catch(e){}
+            try { 
+                const res = await llamarAppsScript(fd); 
+                alert(res.message); 
+                cerrarGestionSemanal(); 
+                cargarControlSemanal(); 
+            } catch(e) {
+                alert("❌ Error al procesar acción: " + e.message);
+            }
+        }
+
+        async function guardarEdicionPerfil() {
+            const nuevoNombre = document.getElementById('gs-edit-nombre').value.trim();
+            const nuevoCodigo = document.getElementById('gs-edit-codigo').value.trim();
+            
+            if (!nuevoNombre || !nuevoCodigo) return alert("El nombre y el código no pueden estar vacíos.");
+            if (nuevoNombre === selSem.nombre && nuevoCodigo === selSem.codigo) {
+                return alert("No has realizado ningún cambio.");
+            }
+
+            const confirmacion = confirm(`¿Estás seguro de actualizar los datos?\n\nNombre: ${selSem.nombre} ➔ ${nuevoNombre}\nCódigo: ${selSem.codigo} ➔ ${nuevoCodigo}`);
+            if (!confirmacion) return;
+
+            const fd = new FormData();
+            fd.append('accion', 'EditarParticipanteSemanal');
+            fd.append('codigoOriginal', selSem.codigo); 
+            fd.append('nuevoNombre', nuevoNombre);
+            fd.append('nuevoCodigo', nuevoCodigo);
+
+            try {
+                const res = await llamarAppsScript(fd);
+                alert(res.message);
+                cerrarGestionSemanal();
+                cargarControlSemanal(); 
+            } catch(e) {
+                alert("❌ Error al editar perfil: " + e.message);
+            }
         }
 
         function filtrarSemanalLocal() {
             const t = document.getElementById('filtro-semanal').value.toLowerCase();
             const items = document.querySelectorAll('#lista-semanal-dinamica .list-item');
+            items.forEach(i => i.style.display = i.innerText.toLowerCase().includes(t) ? 'flex' : 'none');
+        }
+
+        // --- BUSCADOR LOCAL DE JUGADORES TEMPORADA ARREGLADO ---
+        function filtrarJugadoresLocal() {
+            const t = document.getElementById('filtro-jugadores').value.toLowerCase();
+            const items = document.querySelectorAll('#lista-jugadores .jugador-item');
             items.forEach(i => i.style.display = i.innerText.toLowerCase().includes(t) ? 'flex' : 'none');
         }
 
@@ -433,7 +546,7 @@
             fd.append('codigo', document.getElementById('reg-codigo-temporada').value);
             fd.append('telefono', document.getElementById('reg-telefono').value);
             fd.append('pagoInicial', document.getElementById('reg-pago').value);
-            try { await llamarAppsScript(fd); alert("Registrado"); e.target.reset(); } catch(e){}
+            try { await llamarAppsScript(fd); alert("Registrado"); e.target.reset(); } catch(e){ alert("❌ Error: " + e.message); }
         };
 
         document.getElementById('btn-cargar-jugadores').onclick = async () => {
@@ -444,7 +557,7 @@
                 const c = document.getElementById('lista-jugadores'); c.innerHTML = '';
                 listaJugadoresCache.forEach(j => { c.innerHTML += `<div class="jugador-item" onclick='verJugador(${JSON.stringify(j)})'>${j.nombre} <span>${j.codigo}</span></div>`; });
                 document.getElementById('visor-jugadores-container').style.display = 'block';
-            } catch(e){}
+            } catch(e){ alert("❌ Error al cargar jugadores: " + e.message); }
         };
 
         window.verJugador = (j) => {
@@ -463,7 +576,7 @@
             const fd = new FormData(); fd.append('accion', 'registrarPago');
             fd.append('codigo', jugadorSeleccionadoActual.codigo); fd.append('monto', m);
             fd.append('metodo', document.getElementById('modal-pago-metodo').value);
-            try { await llamarAppsScript(fd); document.getElementById('modal-overlay').style.display = 'none'; document.getElementById('btn-cargar-jugadores').click(); } catch(e){}
+            try { await llamarAppsScript(fd); document.getElementById('modal-overlay').style.display = 'none'; document.getElementById('btn-cargar-jugadores').click(); } catch(e){ alert("❌ Error: " + e.message); }
         };
 
         document.getElementById('btn-cargar-plantillas').onclick = async () => {
@@ -471,7 +584,7 @@
                 const fd = new FormData(); fd.append('accion', 'getPlantillas');
                 const d = await llamarAppsScript(fd);
                 document.getElementById('msg-temporada').value = d.temporada; document.getElementById('msg-semanal').value = d.semanal;
-            } catch(e){}
+            } catch(e){ alert("❌ Error al cargar plantillas: " + e.message); }
         };
 
         function copiarTexto(id, btn) { 
@@ -485,7 +598,7 @@
             try {
                 const r = await llamarAppsScript(fd);
                 document.getElementById('codigo-asignado-texto').innerText = r.codigo; document.getElementById('resultado-asignacion').style.display = 'block';
-            } catch(e){}
+            } catch(e){ alert("❌ Error: " + e.message); }
         };
 
         document.getElementById('jornada-resultados-select').onchange = async (e) => {
@@ -499,43 +612,33 @@
                     <input type="number" id="p${i}_L" value="${p.res_local}"> <input type="number" id="p${i}_V" value="${p.res_visita}">
                     <button onclick="guardarPartido(${i})" class="btn-secondary">💾</button></div>`;
                 });
-            } catch(e){}
+            } catch(e){ alert("❌ Error al cargar partidos: " + e.message); }
         };
 
         window.guardarPartido = async (i) => {
             const fd = new FormData(); fd.append('accion', 'actualizarPartidoUnico');
             fd.append('jornada', document.getElementById('jornada-resultados-select').value); fd.append('partidoIndex', i);
             fd.append('local', document.getElementById(`p${i}_L`).value); fd.append('visitante', document.getElementById(`p${i}_V`).value);
-            try { await llamarAppsScript(fd); } catch(e){}
+            try { await llamarAppsScript(fd); alert("Partido guardado"); } catch(e){ alert("❌ Error: " + e.message); }
         };
 
         document.getElementById('btn-iniciar-tabla').onclick = async () => {
-    // Primer aviso normal
-    if(!confirm("⚠️ ADVERTENCIA: Esto borrará TODOS los puntos de la Tabla General a 0.\n\n¿Estás totalmente seguro?")) return;
-
-    // SEGUNDO AVISO: Candado de Contraseña
-    const validacion = prompt("CANDADO DE SEGURIDAD\n\nPor favor, ingresa tu contraseña de Administrador para confirmar el reinicio total:");
-
-    if (validacion === null) return; // Si le pica a cancelar en el prompt
-
-    if (validacion === adminPassword) {
-        // Solo si la contraseña escrita es igual a la que usó para el login
-        try { 
-            const fd = new FormData(); 
-            fd.append('accion', 'iniciarTablaGeneral'); 
-            await llamarAppsScript(fd); 
-            alert("✅ Tabla General reiniciada con éxito.");
-        } catch(e){
-            alert("Error al procesar: " + e.message);
-        }
-    } else {
-        alert("❌ Contraseña incorrecta. El reinicio ha sido cancelado por seguridad.");
-    }
-};
+            if(!confirm("⚠️ ADVERTENCIA: Esto borrará TODOS los puntos de la Tabla General a 0.\n\n¿Estás totalmente seguro?")) return;
+            const validacion = prompt("CANDADO DE SEGURIDAD\n\nPor favor, ingresa tu contraseña de Administrador para confirmar el reinicio total:");
+            if (validacion === null) return; 
+            if (validacion === adminPassword) {
+                try { 
+                    const fd = new FormData(); 
+                    fd.append('accion', 'iniciarTablaGeneral'); 
+                    await llamarAppsScript(fd); 
+                    alert("✅ Tabla General reiniciada con éxito.");
+                } catch(e){ alert("Error al procesar: " + e.message); }
+            } else { alert("❌ Contraseña incorrecta. El reinicio ha sido cancelado por seguridad."); }
+        };
 
         document.getElementById('form-calificar-jornada').onsubmit = async (e) => {
             e.preventDefault(); const fd = new FormData(); fd.append('accion', 'calificarJornada');
-            fd.append('jornada', document.getElementById('jornada-calificar-select').value); try { await llamarAppsScript(fd); } catch(e){}
+            fd.append('jornada', document.getElementById('jornada-calificar-select').value); try { await llamarAppsScript(fd); alert("Calificado con éxito"); } catch(e){ alert("❌ Error: " + e.message); }
         };
 
         document.getElementById('form-cargar-participantes-semanal').onsubmit = async (e) => {
@@ -547,7 +650,7 @@
                 const l = document.getElementById('participantes-semanal-lista'); l.innerHTML = '';
                 r.participantes.forEach(p => { l.innerHTML += `<div style="padding:5px;"><label><input type="checkbox" name="jugador_${p.codigo}" value="${p.codigo}" checked> ${p.nombre} (${p.tipo})</label></div>`; });
                 document.getElementById('seccion-lista-participantes').style.display = 'block';
-            } catch(e){}
+            } catch(e){ alert("❌ Error al cargar participantes semanales: " + e.message); }
         };
 
         document.getElementById('form-calcular-semanal').onsubmit = async (e) => {
@@ -559,46 +662,41 @@
                 const b = document.getElementById('resultados-semanal-tbody'); b.innerHTML = '';
                 r.resultados.forEach((res, i) => { b.innerHTML += `<tr><td>${i+1}</td><td>${res.nombre}</td><td><b>${res.puntos}</b></td><td>${res.aciertosM}</td><td>${res.aciertosR}</td></tr>`; });
                 document.getElementById('seccion-resultados-semanal').style.display = 'block';
-            } catch(e){}
+            } catch(e){ alert("❌ Error al calcular ganador semanal: " + e.message); }
         };
         
-        document.getElementById('form-fecha-limite').onsubmit = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarFechaLimite'); fd.append('fechaLimite', document.getElementById('fecha-limite-input').value); try { await llamarAppsScript(fd); } catch(e){} };
-        document.getElementById('form-jornada-activa').onsubmit = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarJornadaActiva'); fd.append('jornadaActiva', document.getElementById('jornada-activa-select').value); try { await llamarAppsScript(fd); } catch(e){} };
+        document.getElementById('form-fecha-limite').onsubmit = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarFechaLimite'); fd.append('fechaLimite', document.getElementById('fecha-limite-input').value); try { await llamarAppsScript(fd); alert("Fecha límite guardada"); } catch(e){ alert("❌ Error: " + e.message); } };
+        document.getElementById('form-jornada-activa').onsubmit = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('accion','actualizarJornadaActiva'); fd.append('jornadaActiva', document.getElementById('jornada-activa-select').value); try { await llamarAppsScript(fd); alert("Jornada activa guardada"); } catch(e){ alert("❌ Error: " + e.message); } };
          
-
-
         async function cambiarEstatusManual(nuevoEstatus) {
-     // Obtenemos el código directamente de lo que muestra el modal
-    const codigo = document.getElementById('modal-codigo').textContent;
-    const pass = document.getElementById('admin-password').value; 
+            const codigo = document.getElementById('modal-codigo').textContent;
+            const pass = document.getElementById('admin-password').value; 
 
-    if (!pass) return alert("Por favor ingresa la contraseña de administrador.");
-    if (!codigo) return alert("Error: No se detectó el código del jugador.");
+            if (!pass) return alert("Por favor ingresa la contraseña de administrador.");
+            if (!codigo) return alert("Error: No se detectó el código del jugador.");
 
-    const confirmacion = confirm(`¿Cambiar estatus de ${codigo} a ${nuevoEstatus || 'AUTOMÁTICO'}?`);
-    if (!confirmacion) return;
+            const confirmacion = confirm(`¿Cambiar estatus de ${codigo} a ${nuevoEstatus || 'AUTOMÁTICO'}?`);
+            if (!confirmacion) return;
 
-    // Usamos el cargador que ya tienes
-    document.getElementById('admin-loader').style.display = 'block';
+            document.getElementById('admin-loader').style.display = 'block';
 
-    const fd = new FormData();
-    fd.append('accion', 'actualizarEstatusManual');
-    fd.append('adminPassword', pass);
-    fd.append('codigo', codigo);
-    fd.append('estatus', nuevoEstatus);
+            const fd = new FormData();
+            fd.append('accion', 'actualizarEstatusManual');
+            fd.append('adminPassword', pass);
+            fd.append('codigo', codigo);
+            fd.append('estatus', nuevoEstatus);
 
-    try {
-        const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
-        const data = await res.json();
-        alert(data.message);
-        // Cerramos el modal para que no se vea feo
-        document.getElementById('modal-overlay').style.display = 'none';
-    } catch (e) {
-        alert("Error de conexión");
-    } finally {
-        document.getElementById('admin-loader').style.display = 'none';
-    }
-}    
-</script>
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
+                const data = await res.json();
+                alert(data.message);
+                document.getElementById('modal-overlay').style.display = 'none';
+            } catch (e) {
+                alert("Error de conexión");
+            } finally {
+                document.getElementById('admin-loader').style.display = 'none';
+            }
+        }    
+    </script>
 </body>
 </html>
