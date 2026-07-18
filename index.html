@@ -11,7 +11,7 @@
         body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f0f2f5; color: #333; -webkit-font-smoothing: antialiased; }
         
         /* --- Estilos Generales --- */
-        .admin-panel { max-width: 900px; margin: 20px auto; background-color: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
+        .admin-panel { max-width: 950px; margin: 20px auto; background-color: #fff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
         header { background-color: #2c3e50; color: white; padding: 20px 25px; text-align: center; position: relative; }
         header h1 { margin: 0; font-size: 1.5em; }
         
@@ -34,6 +34,7 @@
 
         /* --- Formularios y Listas --- */
         .form-section { background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 25px; }
+        .form-section h3 { margin-top: 0; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 0.9em; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; font-family: inherit; }
@@ -42,7 +43,7 @@
         button:active { transform: scale(0.98); }
         .btn-primary { background-color: #3498db; color: white; }
         .btn-secondary { background-color: #2ecc71; color: white; }
-        .btn-warning { background-color: #f39c12; color: white; }
+        .btn-warning { background-color: #ffb300; color: white; }
         .btn-danger { background-color: #e74c3c; color: white; }
 
         #lista-jugadores, #lista-semanal-dinamica { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; background: #fff; padding: 10px; }
@@ -58,8 +59,6 @@
         .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        #admin-mensaje { display: none; text-align: center; margin: 20px 0; font-weight: 500; padding: 15px; border-radius: 6px; }
-
         /* --- Modales --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto; }
@@ -69,11 +68,6 @@
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #f4f4f4; }
-
-        .btn-status { padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin: 2px; font-weight: bold; }
-        .btn-bloquear { background-color: #ff4d4d; color: white; }
-        .btn-permitir { background-color: #2ecc71; color: white; }
-        .btn-limpiar { background-color: #95a5a6; color: white; }
     </style>
 </head>
 <body>
@@ -108,9 +102,11 @@
             <div id="tab-control-semanal" class="tab-content active">
                 <div class="form-section" style="border-left: 5px solid #3498db;">
                     <h3>➕ Alta de Participante Semanal</h3>
+                    <!-- 🔥 MODIFICADO: Agregado campo de WhatsApp en el registro semanal -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="form-group"><label>Nombre:</label><input type="text" id="new-sem-nombre" placeholder="Ej: Eduardo"></div>
                         <div class="form-group"><label>Quinielas:</label><input type="number" id="new-sem-creditos" value="1" min="1"></div>
+                        <div class="form-group" style="grid-column: span 2;"><label>WhatsApp / Teléfono (10 dígitos):</label><input type="tel" id="new-sem-telefono" placeholder="Ej: 8131071919"></div>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn-secondary" onclick="registrarNuevoSem('Pagado')" style="flex:1;">✅ Pagó</button>
@@ -119,7 +115,7 @@
                 </div>
 
                 <div class="form-section" style="background: #e1f5fe; border: 1px solid #b3e5fc;">
-                    <h3 style="color: #0277bd; margin-top: 0;">🚀 Inicio de Jornada</h3>
+                    <h3 style="color: #0277bd;">🚀 Inicio de Jornada</h3>
                     <p style="font-size: 0.85em; color: #555;">Da 1 crédito (fiado) a todos los que tengan 0 créditos.</p>
                     <button class="btn-primary" onclick="fiarMasivo()" style="background-color: #0277bd; width: 100%;">⚡ Activar a todos los que están en 0</button>
                 </div>
@@ -142,7 +138,7 @@
                     <form id="form-registrar-jugador">
                         <div class="form-group"><label>Nombre:</label><input type="text" id="reg-nombre" required></div>
                         <div class="form-group"><label>Código:</label><input type="text" id="reg-codigo-temporada" placeholder="GUAYO" required></div>
-                        <div class="form-group"><label>Tel:</label><input type="tel" id="reg-telefono"></div>
+                        <div class="form-group"><label>Tel / WhatsApp:</label><input type="tel" id="reg-telefono" placeholder="Ej: 8131071919"></div>
                         <div class="form-group"><label>Pago Inicial ($):</label><input type="number" id="reg-pago" value="0"></div>
                         <button type="submit" class="btn-primary" style="width:100%;">Registrar Jugador</button>
                     </form>
@@ -151,7 +147,6 @@
                     <h2>Visor Temporada</h2>
                     <button id="btn-cargar-jugadores" class="btn-primary" style="width:100%; margin-bottom:10px;">Cargar Lista</button>
                     <div id="visor-jugadores-container" style="display:none;">
-                        <!-- BUSCADOR CON EL FILTRADO ONKEYUP YA ACTIVADO -->
                         <input type="text" id="filtro-jugadores" placeholder="Buscar..." onkeyup="filtrarJugadoresLocal()">
                         <div id="lista-jugadores"></div>
                     </div>
@@ -231,6 +226,31 @@
                         <button type="submit" class="btn-primary" style="width:100%; margin-top:10px;">1. Cargar Participantes</button>
                     </form>
                 </div>
+
+                <!-- Balance de Caja con Buscador y Cobranza Doble por WhatsApp -->
+                <div class="form-section" style="background: #fff8e1; border: 1px solid #ffe082;">
+                    <h3 style="color: #b78103;">📊 Balance Financiero Semanal (Cierre de Caja)</h3>
+                    <p style="font-size: 0.85em; color: #666;">Calcula montos basados únicamente en dinero real liquidado en PAGOS_DETALLE.</p>
+                    <button type="button" onclick="obtenerCierreCajaSemanal()" class="btn-warning" style="width:100%; font-weight: bold;">Generar Balance de Caja</button>
+                    
+                    <div id="seccion-cierre-semanal" style="display:none; margin-top: 15px;">
+                        <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>Total Quinielas Jugadas: <b id="cierre-total-q">0</b></div>
+                            <div>Monto Total Esperado: <b id="cierre-monto-esp">$0.00</b></div>
+                            <div style="color: #27ae60;">Dinero Ya Cobrado: <b id="cierre-monto-cob">$0.00</b></div>
+                            <div style="color: #e74c3c;">Deuda de la Jornada: <b id="cierre-monto-debe">$0.00</b></div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <label style="font-size: 0.85em; font-weight: 500;">🔍 Filtrar Balanza:</label>
+                            <input type="text" id="filtro-cierre-semanal" placeholder="Escribe nombre, código o estatus..." onkeyup="filtrarCierreSemanalLocal()" style="margin-top: 4px;">
+                        </div>
+
+                        <h4>📋 Lista de Participantes en la Jornada</h4>
+                        <div id="cierre-tabla-contenedor" style="background:#fff; border-radius:6px; border:1px solid #eee; overflow-x:auto;"></div>
+                    </div>
+                </div>
+
                 <form id="form-calcular-semanal">
                     <div class="form-section" id="seccion-lista-participantes" style="display:none;">
                         <h2>2. Confirmar Pagos</h2>
@@ -249,7 +269,6 @@
         </div>
 
         <div id="admin-loader"><div class="spinner"></div><div id="loader-text">Procesando...</div></div>
-        <div id="admin-mensaje"></div>
     </div>
 
     <!-- Modal Gestión Semanal -->
@@ -263,7 +282,7 @@
                 <p>Wallet (Sobra): <b id="gs-wallet" style="color:#27ae60;">$0.00</b></p>
             </div>
 
-            <!-- SECCIÓN NUEVA: EDITAR PERFIL -->
+            <!-- SECCIÓN EDITAR PERFIL -->
             <div style="background:#e8f4fd; padding:15px; border-radius:10px; margin:15px 0; border:1px solid #b3e5fc;">
                 <label style="font-size:0.8em; font-weight:bold; color:#0277bd;">✏️ EDITAR NOMBRE O CÓDIGO:</label>
                 <div class="form-group" style="margin-top:8px; margin-bottom:10px;">
@@ -399,12 +418,14 @@
         async function registrarNuevoSem(metodo) {
             const nombre = document.getElementById('new-sem-nombre').value.trim();
             const creditos = document.getElementById('new-sem-creditos').value;
+            const telefono = document.getElementById('new-sem-telefono').value.trim(); // 🔥 Captura de WhatsApp
             if (!nombre || creditos < 1) return alert("Faltan datos");
             
             const fd = new FormData(); 
             fd.append('accion', 'AsignarNuevoParticipante'); 
             fd.append('nombre', nombre); 
             fd.append('creditos', creditos); 
+            fd.append('telefono', telefono); // 🔥 Envío de WhatsApp al backend
             fd.append('metodo', metodo);
             
             try { 
@@ -414,28 +435,27 @@
                 let codigoGenerado = res.codigo;
                 if (!codigoGenerado && res.message) {
                     const partes = res.message.split(':');
-                    if (partes.length > 1) {
-                        codigoGenerado = partes[partes.length - 1].trim();
-                    }
+                    if (partes.length > 1) codigoGenerado = partes[partes.length - 1].trim();
                 }
                 
                 if (codigoGenerado) {
                     if (navigator.clipboard && navigator.clipboard.writeText) {
                         try {
                             await navigator.clipboard.writeText(codigoGenerado);
-                            mensajeFinal += `\n\n📋 ¡El código [${codigoGenerado}] se ha copiado automáticamente a tu portapapeles!`;
+                            mensajeFinal += `\n\n📋 ¡El código [${codigoGenerado}] se ha copiado automáticamente!`;
                             alert(mensajeFinal);
                         } catch (errCopy) {
-                            prompt("¡Registrado! Copia el código generado desde aquí:", codigoGenerado);
+                            prompt("¡Registrado! Copia el código generado:", codigoGenerado);
                         }
                     } else {
-                        prompt("¡Registrado con éxito!\n\nCopia el código generado desde aquí:", codigoGenerado);
+                        prompt("¡Registrado con éxito!\n\nCopia el código generado:", codigoGenerado);
                     }
                 } else {
                     alert(mensajeFinal);
                 }
                 
                 document.getElementById('new-sem-nombre').value = ''; 
+                document.getElementById('new-sem-telefono').value = ''; 
                 cargarControlSemanal(); 
             } catch(e) {
                 alert("❌ Error al registrar participante: " + e.message);
@@ -476,7 +496,10 @@
             const fd = new FormData(); fd.append('codigo', selSem.codigo); fd.append('nombre', selSem.nombre);
             if (tipo === 'pago') { 
                 const m = document.getElementById('gs-monto-pago').value; if(!m) return alert("Ingresa monto"); 
-                fd.append('accion', 'registrarAbonoSemanalV2'); fd.append('monto', m); fd.append('jornada', '1');
+                const jSel = document.getElementById('jornada-semanal-select').value || "1";
+                fd.append('accion', 'registrarAbonoSemanalV2'); 
+                fd.append('monto', m); 
+                fd.append('jornada', jSel);
             } else if (tipo === 'fiar') {
                 const c = document.getElementById('gs-cant-fiar').value; if(!c) return alert("Ingresa cantidad");
                 fd.append('accion', 'FiarCreditos'); 
@@ -502,9 +525,7 @@
             const nuevoCodigo = document.getElementById('gs-edit-codigo').value.trim();
             
             if (!nuevoNombre || !nuevoCodigo) return alert("El nombre y el código no pueden estar vacíos.");
-            if (nuevoNombre === selSem.nombre && nuevoCodigo === selSem.codigo) {
-                return alert("No has realizado ningún cambio.");
-            }
+            if (nuevoNombre === selSem.nombre && nuevoCodigo === selSem.codigo) return alert("No has realizado ningún cambio.");
 
             const confirmacion = confirm(`¿Estás seguro de actualizar los datos?\n\nNombre: ${selSem.nombre} ➔ ${nuevoNombre}\nCódigo: ${selSem.codigo} ➔ ${nuevoCodigo}`);
             if (!confirmacion) return;
@@ -531,11 +552,16 @@
             items.forEach(i => i.style.display = i.innerText.toLowerCase().includes(t) ? 'flex' : 'none');
         }
 
-        // --- BUSCADOR LOCAL DE JUGADORES TEMPORADA ARREGLADO ---
         function filtrarJugadoresLocal() {
             const t = document.getElementById('filtro-jugadores').value.toLowerCase();
             const items = document.querySelectorAll('#lista-jugadores .jugador-item');
             items.forEach(i => i.style.display = i.innerText.toLowerCase().includes(t) ? 'flex' : 'none');
+        }
+
+        function filtrarCierreSemanalLocal() {
+            const t = document.getElementById('filtro-cierre-semanal').value.toLowerCase();
+            const rows = document.querySelectorAll('#cierre-tabla-contenedor tbody tr');
+            rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(t) ? '' : 'none');
         }
 
         // --- OTRAS FUNCIONES ---
@@ -571,25 +597,116 @@
         };
 
         document.getElementById('btn-modal-registrar-pago').onclick = async () => {
-    const m = document.getElementById('modal-pago-monto').value;
-    if(!m) return alert("Por favor, ingresa el monto del abono.");
-    
-    const fd = new FormData(); 
-    fd.append('accion', 'registrarPago');
-    fd.append('codigo', jugadorSeleccionadoActual.codigo); 
-    fd.append('nombre', jugadorSeleccionadoActual.nombre); // 🔥 Aquí parchamos el error mandando el nombre completo
-    fd.append('monto', m);
-    fd.append('metodo', document.getElementById('modal-pago-metodo').value);
-    
-    try { 
-        const res = await llamarAppsScript(fd); 
-        alert(res.message || "Abono registrado con éxito.");
-        document.getElementById('modal-overlay').style.display = 'none'; 
-        document.getElementById('btn-cargar-jugadores').click(); // Recarga la lista en pantalla para actualizar saldos
-    } catch(e){ 
-        alert("❌ Error al registrar abono: " + e.message); 
-    }
-};
+            const m = document.getElementById('modal-pago-monto').value;
+            if(!m) return alert("Por favor, ingresa el monto del abono.");
+            
+            const fd = new FormData(); 
+            fd.append('accion', 'registrarPago');
+            fd.append('codigo', jugadorSeleccionadoActual.codigo); 
+            fd.append('nombre', jugadorSeleccionadoActual.nombre); 
+            fd.append('monto', m);
+            fd.append('metodo', document.getElementById('modal-pago-metodo').value);
+            
+            try { 
+                const res = await llamarAppsScript(fd); 
+                alert(res.message || "Abono registrado con éxito.");
+                document.getElementById('modal-overlay').style.display = 'none'; 
+                document.getElementById('btn-cargar-jugadores').click(); 
+            } catch(e){ 
+                alert("❌ Error al registrar abono: " + e.message); 
+            }
+        };
+
+        // 🔥 FUNCIÓN MASTER: PROCESAR CIERRE DE CAJA E INYECTAR DOBLE COBRANZA (ENVIAR O COPIAR)
+        async function obtenerCierreCajaSemanal() {
+            const jornada = document.getElementById('jornada-semanal-select').value;
+            if (!jornada) return alert("Por favor, selecciona primero una Jornada en el menú.");
+            
+            const fd = new FormData();
+            fd.append('accion', 'ObtenerCierreSemanal');
+            fd.append('jornada', jornada);
+
+            try {
+                const r = await llamarAppsScript(fd);
+                
+                document.getElementById('cierre-total-q').innerText = r.totalQuinielas;
+                document.getElementById('cierre-monto-esp').innerText = "$" + r.dineroEsperado.toFixed(2);
+                document.getElementById('cierre-monto-cob').innerText = "$" + r.dineroCobrado.toFixed(2);
+                document.getElementById('cierre-monto-debe').innerText = "$" + r.dineroDebido.toFixed(2);
+                
+                const cont = document.getElementById('cierre-tabla-contenedor');
+                let html = `<table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f4f4f4;">
+                            <th style="padding:10px; border:1px solid #ddd;">Participante</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Q. Enviadas (J${r.jornada})</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Monto J${r.jornada}</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Abonado J${r.jornada}</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Deuda J${r.jornada}</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Deuda Global</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Acciones de Cobro</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                
+                r.detalles.forEach(d => {
+                    let debeEstaJornada = d.deudaJornada > 0;
+                    let estDeudaJornada = debeEstaJornada ? "color:#e74c3c; font-weight:bold; text-align:center;" : "color:#2ecc71; text-align:center;";
+                    
+                    let esDeudorGlobal = d.deudaGlobal.toUpperCase().includes("PENDIENTE") || d.deudaJornada > 0;
+                    let estDeudaGlobal = d.deudaGlobal.toUpperCase().includes("PENDIENTE") ? "color:#e74c3c; font-weight:bold; text-align:center;" : "color:#2ecc71; text-align:center;";
+                    
+                    // 🔥 CONSTRUCCIÓN DE BOTONES INTELIGENTES (ENVIAR VS COPIAR)
+                    let celdaAcciones = "-";
+                    if (esDeudorGlobal && d.mensajeCobro) {
+                        let cleanPhone = d.telefono ? d.telefono.replace(/\D/g, '') : '';
+                        if (cleanPhone.length === 10) cleanPhone = "52" + cleanPhone; // Código de México universal
+                        
+                        let txtCodificado = encodeURIComponent(d.mensajeCobro);
+                        let textoEscape = d.mensajeCobro.replace(/`/g, '\\`').replace(/\n/g, '\\n');
+                        
+                        let btnEnviar = cleanPhone 
+                            ? `<a href="https://wa.me/${cleanPhone}?text=${txtCodificado}" target="_blank" style="background:#25D366; color:white; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:11px; font-weight:bold; display:inline-block; margin-bottom:4px; text-align:center;">📲 Enviar</a>`
+                            : `<button disabled style="background:#ccc; color:#777; padding:5px 10px; border-radius:4px; font-size:11px; display:inline-block; margin-bottom:4px; cursor:not-allowed;">🚫 Sin Tel</button>`;
+                        
+                        let btnCopiar = `<button onclick="copiarMensajeDesdeTabla(\`${textoEscape}\`)" style="background:#3498db; color:white; border:none; padding:5px 10px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer; display:inline-block; width:70px;">📋 Copiar</button>`;
+                        
+                        celdaAcciones = `<div style="text-align:center;">${btnEnviar}<br>${btnCopiar}</div>`;
+                    } else {
+                        celdaAcciones = `<span style="color:#2ecc71; font-weight:bold;">✅ Al día</span>`;
+                    }
+                    
+                    html += `<tr style="border-bottom:1px solid #eee;">
+                        <td style="padding:10px; border:1px solid #ddd;"><strong>${d.nombre}</strong><br><small style="color:#666;">Cód: ${d.codigo}</small>${d.telefono ? `<br><small style="color:#0277bd; font-weight:bold;">📞 ${d.telefono}</small>` : ''}</td>
+                        <td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">${d.jugadas}</td>
+                        <td style="padding:10px; border:1px solid #ddd; text-align:center;">$${d.montoJornada.toFixed(2)}</td>
+                        <td style="padding:10px; border:1px solid #ddd; text-align:center; color:#27ae60; font-weight:bold;">$${d.pagadoJornada.toFixed(2)}</td>
+                        <td style="${estDeudaJornada}">$${d.deudaJornada.toFixed(2)}</td>
+                        <td style="${estDeudaGlobal}">${d.deudaGlobal}</td>
+                        <td style="padding:8px; border:1px solid #ddd; vertical-align:middle;">${celdaAcciones}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table>`;
+                cont.innerHTML = html;
+                document.getElementById('seccion-cierre-semanal').style.display = 'block';
+                document.getElementById('filtro-cierre-semanal').value = ""; 
+                
+            } catch(e) {
+                alert("❌ Error al generar el balance financiero: " + e.message);
+            }
+        }
+
+        // 🔥 FUNCIÓN AUXILIAR: COPIAR EL MENSAJE DIRECTAMENTE DESDE LA TABLA
+        window.copiarMensajeDesdeTabla = (texto) => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    alert("✅ ¡Mensaje de cobro copiado!\n\nVe a WhatsApp y pégalo directamente al contacto.");
+                }).catch(() => prompt("Copia el texto de cobro desde aquí:", texto));
+            } else {
+                prompt("Copia el texto de cobro desde aquí:", texto);
+            }
+        };
 
         document.getElementById('btn-cargar-plantillas').onclick = async () => {
             try {
