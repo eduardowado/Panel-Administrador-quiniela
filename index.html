@@ -102,7 +102,6 @@
             <div id="tab-control-semanal" class="tab-content active">
                 <div class="form-section" style="border-left: 5px solid #3498db;">
                     <h3>➕ Alta de Participante Semanal</h3>
-                    <!-- 🔥 MODIFICADO: Agregado campo de WhatsApp en el registro semanal -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="form-group"><label>Nombre:</label><input type="text" id="new-sem-nombre" placeholder="Ej: Eduardo"></div>
                         <div class="form-group"><label>Quinielas:</label><input type="number" id="new-sem-creditos" value="1" min="1"></div>
@@ -227,7 +226,7 @@
                     </form>
                 </div>
 
-                <!-- Balance de Caja con Buscador y Cobranza Doble por WhatsApp -->
+                <!-- Balance de Caja con Buscador y Acciones de Cobro -->
                 <div class="form-section" style="background: #fff8e1; border: 1px solid #ffe082;">
                     <h3 style="color: #b78103;">📊 Balance Financiero Semanal (Cierre de Caja)</h3>
                     <p style="font-size: 0.85em; color: #666;">Calcula montos basados únicamente en dinero real liquidado en PAGOS_DETALLE.</p>
@@ -296,8 +295,17 @@
                 <button class="btn-primary" onclick="guardarEdicionPerfil()" style="width:100%; background-color:#3498db; padding:8px; font-size:14px;">Actualizar Perfil</button>
             </div>
 
+            <!-- 🔥 SECCIÓN COBRAR CON SELECTOR DE MÉTODO DE PAGO -->
             <label style="font-size:0.8em; font-weight:bold;">💰 COBRAR DINERO:</label>
-            <div style="display:flex; gap:5px; margin-bottom:15px;"><input type="number" id="gs-monto-pago" placeholder="$"><button class="btn-secondary" onclick="ejecutarAccionSemanal('pago')">Cobrar</button></div>
+            <div style="display:flex; gap:5px; margin-bottom:15px;">
+                <input type="number" id="gs-monto-pago" placeholder="$" style="flex:1;">
+                <select id="gs-metodo-pago" style="flex:1.5; padding:12px; border:1px solid #ccc; border-radius:6px;">
+                    <option value="Transferencia">Transferencia</option>
+                    <option value="Efectivo">Efectivo</option>
+                </select>
+                <button class="btn-secondary" onclick="ejecutarAccionSemanal('pago')">Cobrar</button>
+            </div>
+
             <label style="font-size:0.8em; font-weight:bold;">🚩 FIAR CRÉDITOS:</label>
             <div style="display:flex; gap:5px; margin-bottom:15px;"><input type="number" id="gs-cant-fiar" placeholder="Cant."><button class="btn-warning" onclick="ejecutarAccionSemanal('fiar')">Fiar</button></div>
             <div style="background:#fff5f5; padding:10px; border-radius:8px; border:1px dashed #feb2b2;">
@@ -418,14 +426,14 @@
         async function registrarNuevoSem(metodo) {
             const nombre = document.getElementById('new-sem-nombre').value.trim();
             const creditos = document.getElementById('new-sem-creditos').value;
-            const telefono = document.getElementById('new-sem-telefono').value.trim(); // 🔥 Captura de WhatsApp
+            const telefono = document.getElementById('new-sem-telefono').value.trim(); 
             if (!nombre || creditos < 1) return alert("Faltan datos");
             
             const fd = new FormData(); 
             fd.append('accion', 'AsignarNuevoParticipante'); 
             fd.append('nombre', nombre); 
             fd.append('creditos', creditos); 
-            fd.append('telefono', telefono); // 🔥 Envío de WhatsApp al backend
+            fd.append('telefono', telefono);
             fd.append('metodo', metodo);
             
             try { 
@@ -492,13 +500,22 @@
 
         function cerrarGestionSemanal() { document.getElementById('modal-gestion-semanal').style.display = 'none'; selSem = null; }
 
+        // 🔥 FUNCIÓN COBRAR ACTUALIZADA: ENVÍA MÉTODO DE PAGO
         async function ejecutarAccionSemanal(tipo) {
-            const fd = new FormData(); fd.append('codigo', selSem.codigo); fd.append('nombre', selSem.nombre);
+            const fd = new FormData(); 
+            fd.append('codigo', selSem.codigo); 
+            fd.append('nombre', selSem.nombre);
+            
             if (tipo === 'pago') { 
-                const m = document.getElementById('gs-monto-pago').value; if(!m) return alert("Ingresa monto"); 
+                const m = document.getElementById('gs-monto-pago').value; 
+                if(!m) return alert("Ingresa monto"); 
+                
+                const metodo = document.getElementById('gs-metodo-pago').value;
                 const jSel = document.getElementById('jornada-semanal-select').value || "1";
+                
                 fd.append('accion', 'registrarAbonoSemanalV2'); 
                 fd.append('monto', m); 
+                fd.append('metodo', metodo);
                 fd.append('jornada', jSel);
             } else if (tipo === 'fiar') {
                 const c = document.getElementById('gs-cant-fiar').value; if(!c) return alert("Ingresa cantidad");
@@ -510,6 +527,7 @@
                 fd.append('accion', 'CorregirCreditos'); 
                 fd.append('cantidad', q);
             }
+            
             try { 
                 const res = await llamarAppsScript(fd); 
                 alert(res.message); 
@@ -617,7 +635,7 @@
             }
         };
 
-        // 🔥 FUNCIÓN MASTER: PROCESAR CIERRE DE CAJA E INYECTAR DOBLE COBRANZA (ENVIAR O COPIAR)
+        // FUNCIÓN MASTER: BALANCE FINANCIERO Y ACCIONES DE COBRO
         async function obtenerCierreCajaSemanal() {
             const jornada = document.getElementById('jornada-semanal-select').value;
             if (!jornada) return alert("Por favor, selecciona primero una Jornada en el menú.");
@@ -656,11 +674,10 @@
                     let esDeudorGlobal = d.deudaGlobal.toUpperCase().includes("PENDIENTE") || d.deudaJornada > 0;
                     let estDeudaGlobal = d.deudaGlobal.toUpperCase().includes("PENDIENTE") ? "color:#e74c3c; font-weight:bold; text-align:center;" : "color:#2ecc71; text-align:center;";
                     
-                    // 🔥 CONSTRUCCIÓN DE BOTONES INTELIGENTES (ENVIAR VS COPIAR)
                     let celdaAcciones = "-";
                     if (esDeudorGlobal && d.mensajeCobro) {
                         let cleanPhone = d.telefono ? d.telefono.replace(/\D/g, '') : '';
-                        if (cleanPhone.length === 10) cleanPhone = "52" + cleanPhone; // Código de México universal
+                        if (cleanPhone.length === 10) cleanPhone = "52" + cleanPhone; 
                         
                         let txtCodificado = encodeURIComponent(d.mensajeCobro);
                         let textoEscape = d.mensajeCobro.replace(/`/g, '\\`').replace(/\n/g, '\\n');
@@ -697,7 +714,6 @@
             }
         }
 
-        // 🔥 FUNCIÓN AUXILIAR: COPIAR EL MENSAJE DIRECTAMENTE DESDE LA TABLA
         window.copiarMensajeDesdeTabla = (texto) => {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(texto).then(() => {
