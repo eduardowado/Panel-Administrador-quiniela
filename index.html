@@ -250,26 +250,35 @@
                     </div>
                 </div>
 
-                <!-- Balance Financiero Semanal -->
+                <!-- Balance Financiero Semanal (Multi-Reportes) -->
                 <div class="form-section" style="background: #fff8e1; border: 1px solid #ffe082;">
-                    <h3 style="color: #b78103;">📊 Balance Financiero Semanal (Cierre de Caja)</h3>
-                    <p style="font-size: 0.85em; color: #666;">Calcula montos basados en quinielas reales enviadas en la semana.</p>
-                    <button type="button" onclick="obtenerCierreCajaSemanal()" class="btn-warning" style="width:100%; font-weight: bold;">Generar Balance de Caja</button>
+                    <h3 style="color: #b78103;">📊 Reportes y Balances de Cobranza</h3>
+                    <p style="font-size: 0.85em; color: #666;">Selecciona el tipo de reporte que deseas generar.</p>
+                    
+                    <div style="display:flex; gap:8px; margin-bottom:15px; flex-wrap:wrap;">
+                        <select id="tipo-reporte-select" style="flex:3; min-width:200px; border:2px solid #b78103; font-weight:bold; padding:10px;">
+                            <option value="general">1. Balance General (Jornada Actual)</option>
+                            <option value="detallado">2. Cobranza Detallada J1 a J17 (Solo Deudores)</option>
+                            <option value="resumen">3. Cobranza Resumen (Solo Deudores)</option>
+                        </select>
+                        <button type="button" onclick="obtenerCierreCajaSemanal()" class="btn-warning" style="flex:1; min-width:100px; font-weight:bold;">Generar</button>
+                        <button type="button" onclick="obtenerCierreCajaSemanal()" class="btn-primary" style="background-color:#34495e; padding: 12px 15px;" title="Actualizar Datos">🔄</button>
+                    </div>
                     
                     <div id="seccion-cierre-semanal" style="display:none; margin-top: 15px;">
-                        <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div>Total Quinielas Jugadas: <b id="cierre-total-q">0</b></div>
-                            <div>Monto Total Esperado: <b id="cierre-monto-esp">$0.00</b></div>
+                        <!-- Contenedor de Totales (Solo se muestra en Balance General) -->
+                        <div id="cierre-stats-row" style="background:#fff; padding:15px; border-radius:8px; border:1px solid #e0e0e0; margin-bottom:15px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <div>Total Quinielas Jugadas (J<span id="cierre-j-label"></span>): <b id="cierre-total-q">0</b></div>
+                            <div>Monto Esperado (J<span id="cierre-j-label2"></span>): <b id="cierre-monto-esp">$0.00</b></div>
                             <div style="color: #27ae60;">Dinero Ya Cobrado: <b id="cierre-monto-cob">$0.00</b></div>
                             <div style="color: #e74c3c;">Deuda de la Jornada: <b id="cierre-monto-debe">$0.00</b></div>
                         </div>
                         
-                        <div style="margin-bottom: 12px;">
-                            <label style="font-size: 0.85em; font-weight: 500;">🔍 Filtrar Balanza:</label>
-                            <input type="text" id="filtro-cierre-semanal" placeholder="Escribe nombre, código o estatus..." onkeyup="filtrarCierreSemanalLocal()" style="margin-top: 4px;">
+                        <div style="margin-bottom: 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                            <h4 id="titulo-tabla-reporte" style="margin:0; color:#333;">📋 Lista de Participantes</h4>
+                            <input type="text" id="filtro-cierre-semanal" placeholder="🔍 Filtrar nombre..." onkeyup="filtrarCierreSemanalLocal()" style="width:200px; padding:6px;">
                         </div>
 
-                        <h4>📋 Lista de Participantes en la Jornada</h4>
                         <div id="cierre-tabla-contenedor" style="background:#fff; border-radius:6px; border:1px solid #eee; overflow-x:auto;"></div>
                     </div>
                 </div>
@@ -489,7 +498,6 @@
             
             document.getElementById('gs-edit-nombre').value = j.nombre;
             document.getElementById('gs-edit-codigo').value = j.codigo;
-            // 🔥 Cargar el teléfono al abrir la ventana de edición
             document.getElementById('gs-edit-telefono').value = j.telefono || ''; 
 
             const dCont = document.getElementById('gs-deuda-cont');
@@ -508,7 +516,6 @@
                 const m = document.getElementById('gs-monto-pago').value; 
                 if(!m) return alert("Ingresa monto"); 
                 
-                // 🔥 Captura si es Efectivo o Transferencia
                 const metodo = document.getElementById('gs-metodo-pago').value;
                 const jSel = document.getElementById('jornada-semanal-select').value || "1";
                 
@@ -550,7 +557,6 @@
             fd.append('codigoOriginal', selSem.codigo); 
             fd.append('nuevoNombre', nuevoNombre);
             fd.append('nuevoCodigo', nuevoCodigo);
-            // 🔥 Enviamos el teléfono actualizado al backend
             fd.append('nuevoTelefono', nuevoTelefono); 
 
             try {
@@ -572,7 +578,6 @@
                 document.getElementById('arq-temp-cobrado').innerText = "$" + res.temporada.cobrado.toFixed(2);
                 document.getElementById('arq-sem-custodia').innerText = "$" + res.semanal.totalCustodia.toFixed(2);
                 
-                // 🔥 Mostramos los créditos efectivamente "PAGADOS"
                 document.getElementById('arq-sem-cred-num').innerText = res.semanal.creditosPagados; 
                 document.getElementById('arq-sem-cred-monto').innerText = res.semanal.dineroCreditos.toFixed(2);
                 document.getElementById('arq-sem-wallet').innerText = res.semanal.totalWallet.toFixed(2);
@@ -584,9 +589,10 @@
             } catch(e) { alert("❌ Error al consultar arqueo: " + e.message); }
         }
 
-        // --- BALANCE SEMANAL ---
+        // --- BALANCE Y REPORTES MULTI-OPCIÓN ---
         async function obtenerCierreCajaSemanal() {
             const jornada = document.getElementById('jornada-semanal-select').value;
+            const tipo = document.getElementById('tipo-reporte-select').value;
             if (!jornada) return alert("Selecciona primero una Jornada.");
             
             const fd = new FormData();
@@ -595,64 +601,157 @@
 
             try {
                 const r = await llamarAppsScript(fd);
-                document.getElementById('cierre-total-q').innerText = r.totalQuinielas;
-                document.getElementById('cierre-monto-esp').innerText = "$" + r.dineroEsperado.toFixed(2);
-                document.getElementById('cierre-monto-cob').innerText = "$" + r.dineroCobrado.toFixed(2);
-                document.getElementById('cierre-monto-debe').innerText = "$" + r.dineroDebido.toFixed(2);
-                
                 const cont = document.getElementById('cierre-tabla-contenedor');
-                let html = `<table style="width:100%; border-collapse:collapse;">
-                    <thead>
-                        <tr style="background:#f4f4f4;">
+                const statsRow = document.getElementById('cierre-stats-row');
+                const titulo = document.getElementById('titulo-tabla-reporte');
+                
+                let html = '';
+
+                // ==========================================
+                // 1. BALANCE GENERAL
+                // ==========================================
+                if (tipo === 'general') {
+                    statsRow.style.display = 'grid';
+                    document.getElementById('cierre-j-label').innerText = r.jornada;
+                    document.getElementById('cierre-j-label2').innerText = r.jornada;
+                    document.getElementById('cierre-total-q').innerText = r.totalQuinielas;
+                    document.getElementById('cierre-monto-esp').innerText = "$" + r.dineroEsperado.toFixed(2);
+                    document.getElementById('cierre-monto-cob').innerText = "$" + r.dineroCobrado.toFixed(2);
+                    document.getElementById('cierre-monto-debe').innerText = "$" + r.dineroDebido.toFixed(2);
+                    titulo.innerText = `📋 Actividad en la Jornada ${r.jornada}`;
+
+                    let activosJ = r.detalles.filter(d => d.jugadas > 0 || d.pagadoJornada > 0 || d.deudaJornada > 0);
+                    
+                    html = `<table style="width:100%; border-collapse:collapse; min-width:800px;">
+                        <thead><tr style="background:#f4f4f4;">
                             <th style="padding:10px; border:1px solid #ddd;">Participante</th>
                             <th style="padding:10px; border:1px solid #ddd; text-align:center;">Q. Enviadas (J${r.jornada})</th>
                             <th style="padding:10px; border:1px solid #ddd; text-align:center;">Monto J${r.jornada}</th>
                             <th style="padding:10px; border:1px solid #ddd; text-align:center;">Abonado J${r.jornada}</th>
                             <th style="padding:10px; border:1px solid #ddd; text-align:center;">Deuda J${r.jornada}</th>
-                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Deuda Global</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Deuda Acumulada Real</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Cobro</th>
+                        </tr></thead><tbody>`;
+                    
+                    if(activosJ.length === 0) html += `<tr><td colspan="7" style="text-align:center; padding:20px;">Sin actividad en esta jornada.</td></tr>`;
+                    
+                    activosJ.forEach(d => {
+                        let btn = generarBotonesCobro(d);
+                        let deudaRealStr = d.deudaRealAcumulada > 0 ? `<span style="color:#e74c3c; font-weight:bold;">PENDIENTE: $${d.deudaRealAcumulada}</span>` : `<span style="color:#2ecc71; font-weight:bold;">✅ Pagado</span>`;
+                        
+                        html += `<tr>
+                            <td style="padding:10px; border:1px solid #ddd;"><b>${d.nombre}</b><br><small>Cód: ${d.codigo}</small></td>
+                            <td style="text-align:center; border:1px solid #ddd;"><b>${d.jugadas}</b></td>
+                            <td style="text-align:center; border:1px solid #ddd;">$${d.montoJornada}</td>
+                            <td style="text-align:center; border:1px solid #ddd; color:#27ae60;"><b>$${d.pagadoJornada}</b></td>
+                            <td style="text-align:center; border:1px solid #ddd; color:${d.deudaJornada>0?'#e74c3c':'#333'}">$${d.deudaJornada}</td>
+                            <td style="text-align:center; border:1px solid #ddd;">${deudaRealStr}</td>
+                            <td style="text-align:center; border:1px solid #ddd;">${btn}</td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table>`;
+                }
+                
+                // ==========================================
+                // 2. COBRANZA DETALLADA (J1 A J17)
+                // ==========================================
+                else if (tipo === 'detallado') {
+                    statsRow.style.display = 'none';
+                    titulo.innerText = `🚨 Auditoría Detallada de Deudores (J1 a J17)`;
+                    let deudores = r.detalles.filter(d => d.deudaRealAcumulada > 0);
+                    
+                    let ths = ''; for(let j=1; j<=17; j++) ths += `<th style="padding:8px; border:1px solid #ddd; min-width:100px; text-align:center;">J${j}</th>`;
+                    
+                    html = `<table style="width:100%; border-collapse:collapse; min-width:2000px;">
+                        <thead><tr style="background:#f4f4f4;">
+                            <th style="padding:10px; border:1px solid #ddd; min-width:150px; position:sticky; left:0; background:#f4f4f4; z-index:2;">Participante</th>
+                            ${ths}
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center; background:#ebf5fb; color:#2980b9;">Créditos<br>Sin Jugar</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center; color:#e74c3c;">Total Real<br>a Cobrar</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center;">Acciones</th>
+                        </tr></thead><tbody>`;
+
+                    if(deudores.length === 0) html += `<tr><td colspan="21" style="text-align:center; padding:20px;">🎉 ¡Felicidades! Nadie tiene deudas pendientes.</td></tr>`;
+                    
+                    deudores.forEach(d => {
+                        let btn = generarBotonesCobro(d);
+                        let celdasJornadas = '';
+                        
+                        for(let j=1; j<=17; j++) {
+                            let h = d.historial[j];
+                            if (!h || h.jugadas === 0) {
+                                celdasJornadas += `<td style="text-align:center; border:1px solid #ddd; color:#ccc;">-</td>`;
+                            } else {
+                                if (h.deuda === 0) {
+                                    celdasJornadas += `<td style="text-align:center; border:1px solid #ddd; font-size:0.85em;"><span style="color:#2ecc71;"><b>${h.jugadas}Q ($${h.costo})</b><br>✅ Pagado</span></td>`;
+                                } else if (h.pagado > 0) {
+                                    celdasJornadas += `<td style="text-align:center; border:1px solid #ddd; font-size:0.85em;"><span style="color:#e67e22;"><b>${h.jugadas}Q ($${h.costo})</b><br>⚠️ Debe: $${h.deuda}</span></td>`;
+                                } else {
+                                    celdasJornadas += `<td style="text-align:center; border:1px solid #ddd; font-size:0.85em; background:#fdf2e9;"><span style="color:#e74c3c;"><b>${h.jugadas}Q ($${h.costo})</b><br>🛑 Pendiente: $${h.deuda}</span></td>`;
+                                }
+                            }
+                        }
+
+                        html += `<tr>
+                            <td style="padding:10px; border:1px solid #ddd; position:sticky; left:0; background:#fff; z-index:1;"><b>${d.nombre}</b><br><small>Cód: ${d.codigo}</small></td>
+                            ${celdasJornadas}
+                            <td style="text-align:center; border:1px solid #ddd; font-weight:bold; color:#2980b9; background:#f4fafe;">${d.fiados}</td>
+                            <td style="text-align:center; border:1px solid #ddd; font-weight:bold; color:#e74c3c; font-size:1.1em;">$${d.deudaRealAcumulada}</td>
+                            <td style="text-align:center; border:1px solid #ddd;">${btn}</td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table>`;
+                }
+
+                // ==========================================
+                // 3. COBRANZA RESUMEN
+                // ==========================================
+                else if (tipo === 'resumen') {
+                    statsRow.style.display = 'none';
+                    titulo.innerText = `📝 Resumen Ejecutivo de Deudores`;
+                    let deudores = r.detalles.filter(d => d.deudaRealAcumulada > 0);
+                    
+                    html = `<table style="width:100%; border-collapse:collapse; min-width:600px;">
+                        <thead><tr style="background:#f4f4f4;">
+                            <th style="padding:10px; border:1px solid #ddd;">Participante</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center; background:#ebf5fb; color:#2980b9;">Créditos<br>Sin Jugar (Fiados)</th>
+                            <th style="padding:10px; border:1px solid #ddd; text-align:center; color:#e74c3c;">Total Real a Cobrar</th>
                             <th style="padding:10px; border:1px solid #ddd; text-align:center;">Acciones de Cobro</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-                
-                r.detalles.forEach(d => {
-                    let debeEstaJornada = d.deudaJornada > 0;
-                    let estDeudaJornada = debeEstaJornada ? "color:#e74c3c; font-weight:bold; text-align:center;" : "color:#2ecc71; text-align:center;";
-                    let esDeudorGlobal = d.deudaGlobal.toUpperCase().includes("PENDIENTE") || d.deudaJornada > 0;
-                    let estDeudaGlobal = d.deudaGlobal.toUpperCase().includes("PENDIENTE") ? "color:#e74c3c; font-weight:bold; text-align:center;" : "color:#2ecc71; text-align:center;";
+                        </tr></thead><tbody>`;
+
+                    if(deudores.length === 0) html += `<tr><td colspan="4" style="text-align:center; padding:20px;">🎉 ¡Felicidades! Nadie tiene deudas pendientes.</td></tr>`;
                     
-                    let celdaAcciones = "-";
-                    if (esDeudorGlobal && d.mensajeCobro) {
-                        let cleanPhone = d.telefono ? d.telefono.replace(/\D/g, '') : '';
-                        if (cleanPhone.length === 10) cleanPhone = "52" + cleanPhone; 
-                        let txtCodificado = encodeURIComponent(d.mensajeCobro);
-                        let textoEscape = d.mensajeCobro.replace(/`/g, '\\`').replace(/\n/g, '\\n');
-                        
-                        let btnEnviar = cleanPhone 
-                            ? `<a href="https://wa.me/${cleanPhone}?text=${txtCodificado}" target="_blank" style="background:#25D366; color:white; padding:5px 10px; border-radius:4px; text-decoration:none; font-size:11px; font-weight:bold; display:inline-block; margin-bottom:4px; text-align:center;">📲 Enviar</a>`
-                            : `<button disabled style="background:#ccc; color:#777; padding:5px 10px; border-radius:4px; font-size:11px; display:inline-block; margin-bottom:4px; cursor:not-allowed;">🚫 Sin Tel</button>`;
-                        
-                        let btnCopiar = `<button onclick="copiarMensajeDesdeTabla(\`${textoEscape}\`)" style="background:#3498db; color:white; border:none; padding:5px 10px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer; display:inline-block; width:70px;">📋 Copiar</button>`;
-                        celdaAcciones = `<div style="text-align:center;">${btnEnviar}<br>${btnCopiar}</div>`;
-                    } else {
-                        celdaAcciones = `<span style="color:#2ecc71; font-weight:bold;">✅ Al día</span>`;
-                    }
-                    
-                    html += `<tr style="border-bottom:1px solid #eee;">
-                        <td style="padding:10px; border:1px solid #ddd;"><strong>${d.nombre}</strong><br><small style="color:#666;">Cód: ${d.codigo}</small>${d.telefono ? `<br><small style="color:#0277bd; font-weight:bold;">📞 ${d.telefono}</small>` : ''}</td>
-                        <td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">${d.jugadas}</td>
-                        <td style="padding:10px; border:1px solid #ddd; text-align:center;">$${d.montoJornada.toFixed(2)}</td>
-                        <td style="padding:10px; border:1px solid #ddd; text-align:center; color:#27ae60; font-weight:bold;">$${d.pagadoJornada.toFixed(2)}</td>
-                        <td style="${estDeudaJornada}">$${d.deudaJornada.toFixed(2)}</td>
-                        <td style="${estDeudaGlobal}">${d.deudaGlobal}</td>
-                        <td style="padding:8px; border:1px solid #ddd; vertical-align:middle;">${celdaAcciones}</td>
-                    </tr>`;
-                });
-                
-                html += `</tbody></table>`;
+                    deudores.forEach(d => {
+                        html += `<tr>
+                            <td style="padding:10px; border:1px solid #ddd;"><b>${d.nombre}</b><br><small>Cód: ${d.codigo}</small></td>
+                            <td style="text-align:center; border:1px solid #ddd; font-weight:bold; color:#2980b9; background:#f4fafe;">${d.fiados}</td>
+                            <td style="text-align:center; border:1px solid #ddd; font-weight:bold; color:#e74c3c; font-size:1.2em;">$${d.deudaRealAcumulada}</td>
+                            <td style="text-align:center; border:1px solid #ddd;">${generarBotonesCobro(d)}</td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table>`;
+                }
+
                 cont.innerHTML = html;
                 document.getElementById('seccion-cierre-semanal').style.display = 'block';
             } catch(e) { alert("❌ Error: " + e.message); }
+        }
+
+        // --- FUNCIÓN AUXILIAR PARA GENERAR BOTONES DE WHATSAPP ---
+        function generarBotonesCobro(d) {
+            if (d.deudaRealAcumulada === 0) return `<span style="color:#2ecc71; font-weight:bold;">✅ Al día</span>`;
+            
+            let cleanPhone = d.telefono ? d.telefono.replace(/\D/g, '') : '';
+            if (cleanPhone.length === 10) cleanPhone = "52" + cleanPhone; 
+            let txtCodificado = encodeURIComponent(d.mensajeCobro);
+            let textoEscape = d.mensajeCobro.replace(/`/g, '\\`').replace(/\n/g, '\\n');
+            
+            let btnEnviar = cleanPhone 
+                ? `<a href="https://wa.me/${cleanPhone}?text=${txtCodificado}" target="_blank" style="background:#25D366; color:white; padding:6px 12px; border-radius:4px; text-decoration:none; font-size:11px; font-weight:bold; display:inline-block; margin-bottom:4px; text-align:center;">📲 Enviar</a>`
+                : `<button disabled style="background:#ccc; color:#777; padding:6px 12px; border-radius:4px; border:none; font-size:11px; display:inline-block; margin-bottom:4px; cursor:not-allowed;">🚫 Sin Tel</button>`;
+            
+            let btnCopiar = `<button onclick="copiarMensajeDesdeTabla(\`${textoEscape}\`)" style="background:#3498db; color:white; border:none; padding:6px 12px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer; display:inline-block; width:70px;">📋 Copiar</button>`;
+            return `<div style="text-align:center;">${btnEnviar}<br>${btnCopiar}</div>`;
         }
 
         window.copiarMensajeDesdeTabla = (texto) => {
